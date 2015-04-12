@@ -112,7 +112,7 @@ public class GameServerTCP extends GameConnectionServer<UUID>
 			message += "," + position[0];
 			message += "," + position[1];
 			message += "," + position[2];
-			System.out.println("server sending move messages");
+			System.out.println("server sending move messages" + message);
 			forwardPacketToAll(message, clientID);
 			}
 			catch (IOException e) { e.printStackTrace();
