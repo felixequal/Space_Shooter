@@ -1,0 +1,186 @@
+package a3;
+
+import java.awt.Color;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+import graphicslib3D.Matrix3D;
+import graphicslib3D.Point3D;
+import graphicslib3D.Vector3D;
+import sage.app.BaseGame;
+import sage.display.IDisplaySystem;
+import sage.input.IInputManager;
+import sage.networking.IGameConnection.ProtocolType;
+import sage.renderer.IRenderer;
+import sage.scene.shape.Cube;
+import sage.scene.shape.Line;
+import sage.scene.shape.Rectangle;
+import sage.texture.Texture;
+import sage.texture.Texture.ApplyMode;
+import sage.texture.TextureManager;
+
+public class MyNetworkingClient extends BaseGame{
+	private IDisplaySystem display;
+	private IRenderer renderer;
+	private IInputManager im;
+	private SpaceShip ship;
+	private Space skyBox;
+	private String gpName, kbName;
+	private FindComponents findControls;
+	private SpaceStation station;
+	MyClient thisClient;
+	InetAddress remAddr;
+	
+	@Override
+	public void initGame(){
+		 try
+			{
+				remAddr = InetAddress.getLocalHost();
+			} catch (UnknownHostException e1)
+			{
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		try
+			{ thisClient = new MyClient(remAddr, 10001, ProtocolType.TCP, this);
+			}
+			catch (UnknownHostException e) { e.printStackTrace();
+			}
+			catch (IOException e) { e.printStackTrace(); }
+			if(thisClient != null) { thisClient.sendJoinMessage(); }
+		
+		
+		im = getInputManager();
+		
+		display = getDisplaySystem();
+		display.setTitle("Space Shooter");
+		
+		renderer = getDisplaySystem().getRenderer();
+		
+		initGameObjects();
+		initInput();
+	}
+	
+	public void initGameObjects(){
+		//Add SkyBox w/ ZBuffer disabled
+		skyBox = new Space(renderer);
+		skyBox.scale(500.0f,500.0f,500.0f);
+		
+		addGameWorldObject(skyBox);
+		
+		//Now enabled the ZBuffer
+		skyBox.getBuf().setDepthTestingEnabled(true);
+		
+		//Add other objects
+		ship = new SpaceShip(renderer,display);
+		Vector3D position = new Vector3D(ship.getLocation());
+		System.out.println(position);
+		//thisClient.sendCreateMessage(position);
+		Cube cube = new Cube();
+		//stationT = TextureManager.loadTexture2D("textures/station_texture.jpg");
+				Texture tex = TextureManager.loadTexture2D("textures/station_texture.jpg");
+				tex.setApplyMode(ApplyMode.Replace);
+				cube.setTexture(tex);
+				addGameWorldObject(cube);
+				//stationObj.setImage(stationT);
+				//stationObj.setLocalTranslation(location);
+				//loadObject();
+		Texture tex1 = TextureManager.loadTexture2D("textures/station_texture.jpg");
+		Rectangle r1 = new Rectangle();
+		r1.setTexture(tex1);
+		addGameWorldObject(r1);
+		//Add Space Station
+		//station = new SpaceStation();
+		//addGameWorldObject(station.loadObject());
+		
+		//Create world Axis
+		Point3D origin = new Point3D(0,0,0);
+		Point3D xEnd = new Point3D(100,0,0);	//Make x axis
+		Point3D yEnd = new Point3D(0,100,0);	//Make y axis
+		Point3D zEnd = new Point3D(0,0,100);	//Make z axis
+		
+		Line xAxis = new Line(origin,xEnd,Color.red,2);	//Make x-line (red)
+		Line yAxis = new Line(origin,yEnd,Color.green,2);	//Make y-line (greed)
+		Line zAxis = new Line(origin,zEnd,Color.blue,2);	//Make z-line (blue)
+		
+		//Add all axis to the gameworld
+		addGameWorldObject(xAxis); addGameWorldObject(yAxis);
+		addGameWorldObject(zAxis);
+	}
+	
+	public void initInput(){
+		
+		findControls = new FindComponents();	//Look for all controls connected to computer that can be used for game
+		//findControls.listControllers();			//List out available controllers
+		
+		//Add Action Classes
+		MoveForwardAction forward = new MoveForwardAction(ship.getCamera(), ship);
+		MoveBackwardAction backward = new MoveBackwardAction(ship.getCamera(), ship);
+		PitchAction pitch = new PitchAction(ship.getCamera(), ship);
+		PitchUpAction pitchUp = new PitchUpAction(ship.getCamera(), ship);
+		PitchDownAction pitchDown = new PitchDownAction(ship.getCamera(), ship);
+		YawRightAction yawRight = new YawRightAction(ship.getCamera(), ship);
+		YawLeftAction yawLeft = new YawLeftAction(ship.getCamera(), ship);
+		TiltRightAction tiltRight = new TiltRightAction(ship.getCamera(), ship);
+		TiltLeftAction tiltLeft = new TiltLeftAction(ship.getCamera(), ship);
+///////////////////////////////////////////////////////////////////////////////////////////////////////		
+		kbName = im.getKeyboardName();
+		im.associateAction(kbName, net.java.games.input.Component.Identifier.Key.W, forward,
+				IInputManager.INPUT_ACTION_TYPE.ON_PRESS_AND_RELEASE);
+		im.associateAction(kbName, net.java.games.input.Component.Identifier.Key.S, backward,
+				IInputManager.INPUT_ACTION_TYPE.ON_PRESS_AND_RELEASE);
+		im.associateAction(kbName, net.java.games.input.Component.Identifier.Key.DOWN, pitchUp,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+		im.associateAction(kbName, net.java.games.input.Component.Identifier.Key.UP, pitchDown,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+		im.associateAction(kbName, net.java.games.input.Component.Identifier.Key.RIGHT, yawRight,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+		im.associateAction(kbName, net.java.games.input.Component.Identifier.Key.LEFT, yawLeft,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+		im.associateAction(kbName, net.java.games.input.Component.Identifier.Key.D, tiltRight,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+		im.associateAction(kbName, net.java.games.input.Component.Identifier.Key.A, tiltLeft,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+		
+		//Check to see if gamepad is connected
+		if(!(im.getFirstGamepadName() == null)){
+			gpName = im.getFirstGamepadName();
+			
+			//Assign controls
+			im.associateAction(gpName, net.java.games.input.Component.Identifier.Button._2, forward,
+					IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+			im.associateAction(gpName, net.java.games.input.Component.Identifier.Button._3, backward,
+					IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+			im.associateAction(gpName, net.java.games.input.Component.Identifier.Axis.Y, pitch,
+					IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+		}
+	}
+	
+	@Override
+	public void update(float elapsedTimeMS){
+		//Update ship's movement according to speed
+		ship.move();
+		//thisClient.processPackets();
+		//Update SkyBox according to ship's position
+		Point3D camLoc = ship.getCamera().getLocation();
+		Matrix3D camTranslation = new Matrix3D();
+		camTranslation.translate(camLoc.getX(),  camLoc.getY(), camLoc.getZ());
+		skyBox.setLocalTranslation(camTranslation);
+		
+		//If Laser class ammoEmpty boolean is not true, then move any missile within the Laser's missile vector
+		
+		//Update everything in the world
+		super.update(elapsedTimeMS);
+	}
+
+	public void setIsConnected(boolean b) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public Vector3D getPlayerPosition() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+}
