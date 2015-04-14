@@ -5,9 +5,13 @@ import graphicslib3D.Vector3D;
 
 import java.util.UUID;
 
+import sage.model.loader.OBJLoader;
 import sage.scene.TriMesh;
 import sage.scene.shape.Pyramid;
 import sage.scene.shape.Sphere;
+import sage.texture.Texture;
+import sage.texture.TextureManager;
+import sage.texture.Texture.ApplyMode;
 
 public class GhostAvatar extends TriMesh {
 
@@ -16,11 +20,21 @@ public class GhostAvatar extends TriMesh {
 	private Vector3D positionVec;
 	private UUID ghostID;
 	
+	private TriMesh shipObj = new TriMesh();
+	private OBJLoader loader = new OBJLoader();
+	private Texture shipT;
+	
 	public GhostAvatar(UUID id, Vector3D initPosition)
 	{
 		ghostID = id;
 		positionVec = initPosition;
 		testPyramid = new Pyramid();
+		
+		shipObj = loader.loadModel("models/Spaceship.obj");
+		shipT = TextureManager.loadTexture2D("textures/playerUV.jpg");
+		shipT.setApplyMode(ApplyMode.Replace);
+		shipObj.setTexture(shipT);
+		
 		//Sphere testSphere = new Sphere();
 		//testSphere.
 		//Matrix3D positionMat = testPyramid.getLocalTranslation();
@@ -52,9 +66,9 @@ public class GhostAvatar extends TriMesh {
 		this.ghostID = ghostID;
 		}
 
-	public Pyramid getAvatar()
+	public TriMesh getAvatar()
 	{
-		return testPyramid;
+		return shipObj;
 	}
 	
 	public void moveAvatar(Vector3D newPos)
