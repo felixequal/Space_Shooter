@@ -110,7 +110,8 @@ private void createGhostAvatar(UUID ghostID, Object ghostPosition2) {
 	}
 private void removeGhostAvatar(UUID ghostID) 
 	{
-		ghostAvatars.remove(ghostID);
+		ghostAvatars.removeElement(ghostID);
+		//ghostAvatars.remove(ghostID);
 		
 	}
 public void sendCreateMessage(Vector3D pos)
