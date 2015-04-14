@@ -1,4 +1,4 @@
-package a3;
+package space_shooter;
 
 import sage.input.action.*;
 import net.java.games.input.Event;

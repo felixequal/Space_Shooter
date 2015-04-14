@@ -1,4 +1,4 @@
-package a3;
+package space_shooter;
 
 import graphicslib3D.Point3D;
 import sage.renderer.IRenderer;

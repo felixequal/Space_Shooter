@@ -1,4 +1,4 @@
-package a3;
+package space_shooter;
 
 import net.java.games.input.Controller;
 import net.java.games.input.ControllerEnvironment;

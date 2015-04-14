@@ -1,4 +1,4 @@
-package a3;
+package space_shooter;
 
 public abstract class MoveableObject extends GameObject{
 	

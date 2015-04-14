@@ -1,4 +1,4 @@
-package a3;
+package space_shooter;
 
 import java.awt.Color;
 

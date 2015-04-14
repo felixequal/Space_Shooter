@@ -1,4 +1,4 @@
-package a3;
+package space_shooter;
 
 import graphicslib3D.Vector3D;
 import sage.model.loader.OBJLoader;
