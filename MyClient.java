@@ -50,7 +50,7 @@ public class MyClient extends GameConnectionClient
 			// format: bye, remoteId
 			UUID ghostID = UUID.fromString(msgTokens[1]);
 			System.out.println("received bye message from: " + ghostID);
-			//removeGhostAvatar(ghostID);
+			removeGhostAvatar(ghostID);
 		}
 		if
 		(msgTokens[0].compareTo("create") == 0)
@@ -108,8 +108,9 @@ private void createGhostAvatar(UUID ghostID, Object ghostPosition2) {
 		//game.addGameWorldObject();
 		
 	}
-private void removeGhostAvatar(UUID ghostID) {
-		// TODO Auto-generated method stub
+private void removeGhostAvatar(UUID ghostID) 
+	{
+		ghostAvatars.remove(ghostID);
 		
 	}
 public void sendCreateMessage(Vector3D pos)
