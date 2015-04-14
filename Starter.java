@@ -1,5 +1,5 @@
-package a3;
-
+package space_shooter;
+//Start point
 public class Starter {
 	public static void main(String[] args) 
 		{
