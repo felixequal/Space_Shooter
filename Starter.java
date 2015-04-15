@@ -1,3 +1,7 @@
+/*
+ * This program is in charge of starting the program. Must run this after starting TestServer.java
+ */
+
 package space_shooter;
 //Start point
 public class Starter {
