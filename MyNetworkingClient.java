@@ -161,7 +161,7 @@ public class MyNetworkingClient extends BaseGame{
 	public void initInput(){
 		
 		findControls = new FindComponents();	//Look for all controls connected to computer that can be used for game
-		//findControls.listControllers();			//List out available controllers
+		findControls.listControllers();			//List out available controllers
 		
 		//Add Action Classes
 		MoveForwardAction forward = new MoveForwardAction(thisClient, ship.getCamera(), ship);
@@ -174,16 +174,17 @@ public class MyNetworkingClient extends BaseGame{
 		TiltRightAction tiltRight = new TiltRightAction(ship.getCamera(), ship);
 		TiltLeftAction tiltLeft = new TiltLeftAction(ship.getCamera(), ship);
 ///////////////////////////////////////////////////////////////////////////////////////////////////////		
-		kbName = im.getKeyboardName();
-		im.associateAction(kbName, Key.W, forward,IInputManager.INPUT_ACTION_TYPE.ON_PRESS_AND_RELEASE);
-		im.associateAction(kbName, Key.S, backward,IInputManager.INPUT_ACTION_TYPE.ON_PRESS_AND_RELEASE);
-		im.associateAction(kbName, Key.DOWN, pitchUp,IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-		im.associateAction(kbName, Key.UP, pitchDown,IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-		im.associateAction(kbName, Key.RIGHT, yawRight,IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-		im.associateAction(kbName, Key.LEFT, yawLeft,IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-		im.associateAction(kbName, Key.D, tiltRight,IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-		im.associateAction(kbName, Key.A, tiltLeft,IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-		
+		if(!(im.getKeyboardName() == null)){
+			kbName = im.getKeyboardName();
+			im.associateAction(kbName, Key.W, forward,IInputManager.INPUT_ACTION_TYPE.ON_PRESS_AND_RELEASE);
+			im.associateAction(kbName, Key.S, backward,IInputManager.INPUT_ACTION_TYPE.ON_PRESS_AND_RELEASE);
+			im.associateAction(kbName, Key.DOWN, pitchUp,IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+			im.associateAction(kbName, Key.UP, pitchDown,IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+			im.associateAction(kbName, Key.RIGHT, yawRight,IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+			im.associateAction(kbName, Key.LEFT, yawLeft,IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+			im.associateAction(kbName, Key.D, tiltRight,IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+			im.associateAction(kbName, Key.A, tiltLeft,IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+		}
 		//Check to see if gamepad is connected
 		if(!(im.getFirstGamepadName() == null)){
 			gpName = im.getFirstGamepadName();
