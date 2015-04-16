@@ -76,8 +76,8 @@ public class GhostAvatar extends TriMesh {
 		
 		//positionVec = newPos;
 		//positionVec.mult(positionMat);
-		//testPyramid.getWorldTranslation().setCol(3,  newPos);
-		//testPyramid.setWorldTranslation(positionMat);
+		//shipObj.getWorldTranslation().setCol(3,  newPos);
+		//shipObj.setWorldTranslation(positionMat);
 		shipObj.translate((float)newPos.getX(), (float)newPos.getY(), (float)newPos.getY());
 	}
 	
