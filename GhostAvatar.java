@@ -38,7 +38,7 @@ public class GhostAvatar extends TriMesh {
 		//Sphere testSphere = new Sphere();
 		//testSphere.
 		//Matrix3D positionMat = testPyramid.getLocalTranslation();
-		testPyramid.translate((float)positionVec.getX(), (float)positionVec.getY(), (float)positionVec.getZ());
+		shipObj.translate((float)positionVec.getX(), (float)positionVec.getY(), (float)positionVec.getZ());
 		//testPyramid.setColor(Color.BLUE);
 		//testPyramid.setLocalTranslation(positionMat);
 		//testPyramid.translate(initPosition.getX(), initPosition.getY(), initPosition.getZ());
@@ -78,7 +78,7 @@ public class GhostAvatar extends TriMesh {
 		//positionVec.mult(positionMat);
 		//testPyramid.getWorldTranslation().setCol(3,  newPos);
 		//testPyramid.setWorldTranslation(positionMat);
-		testPyramid.translate((float)newPos.getX(), (float)newPos.getY(), (float)newPos.getY());
+		shipObj.translate((float)newPos.getX(), (float)newPos.getY(), (float)newPos.getY());
 	}
 	
 }
