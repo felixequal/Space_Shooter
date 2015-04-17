@@ -20,7 +20,7 @@ public class SpaceStation extends GameObject
 		stationT.setApplyMode(ApplyMode.Replace);
 		stationObj.setTexture(stationT);
 		stationObj.rotate(45, new Vector3D(1,0,0));
-		stationObj.translate(20, 0, -100);
+		stationObj.translate(80, 0, -100);
 
 		loadObject();
 	}
