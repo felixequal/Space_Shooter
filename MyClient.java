@@ -16,6 +16,7 @@ public class MyClient extends GameConnectionClient
 	private UUID id;
 	private Vector<GhostAvatar> ghostAvatars;
 	private Object ghostPosition;
+	private UUID ghostID;
 	
 	public MyClient(InetAddress remAddr, int remPort, ProtocolType pType, MyNetworkingClient game) throws IOException
 	{
@@ -48,7 +49,7 @@ public class MyClient extends GameConnectionClient
 			
 		{
 			// format: bye, remoteId
-			UUID ghostID = UUID.fromString(msgTokens[1]);
+			ghostID = UUID.fromString(msgTokens[1]);
 			System.out.println("received bye message from: " + ghostID);
 			removeGhostAvatar(ghostID);
 		}
@@ -58,13 +59,13 @@ public class MyClient extends GameConnectionClient
 		{
 			System.out.println("Received create message from server");
 			// format: create, remoteId, x,y,z or dsfr, remoteId, x,y,z
-			UUID ghostID = UUID.fromString(msgTokens[1]);
+			ghostID = UUID.fromString(msgTokens[1]);
 			double x = Double.parseDouble(msgTokens[2]);
 			double y = Double.parseDouble(msgTokens[3]);
 			double z = Double.parseDouble(msgTokens[4]);
 			Vector3D ghostVector = new Vector3D(x,y,z); 
 			// extract ghost x,y,z, position from message, then:
-			createGhostAvatar(ghostID, ghostPosition);
+			createGhostAvatar(ghostID, ghostVector);
 		}
 		if(msgTokens[0].compareTo("wsds") == 0)
 			// receive “create...”
@@ -79,17 +80,20 @@ public class MyClient extends GameConnectionClient
 		if(msgTokens[0].compareTo("move") == 0)
 			// receive “move”
 		{
-			System.out.println("Received move message from server");
+			
 			// format: create, remoteId, x,y,z or dsfr, remoteId, x,y,z
-			UUID ghostID = UUID.fromString(msgTokens[1]);
+			ghostID = UUID.fromString(msgTokens[1]);
+			System.out.println("Received move message from server from: " + ghostID);
 			double x = Double.parseDouble(msgTokens[2]);
 			double y = Double.parseDouble(msgTokens[3]);
 			double z = Double.parseDouble(msgTokens[4]);
-			Vector3D ghostVector = new Vector3D(x,y,z); 
+			Vector3D ghostVector = new Vector3D(x,y,z);
+			System.out.println("move vector from other client: " + ghostVector.toString());
 			// extract ghost x,y,z, position from message, then:
 			for(GhostAvatar check: ghostAvatars)
 				{
 					if (check.getGhostID() == ghostID)
+						System.out.println("Found ghost avatar");
 						check.moveAvatar(ghostVector);
 				}
 			//ghostAvatars.
@@ -97,10 +101,10 @@ public class MyClient extends GameConnectionClient
 		}
 	}
 
-private void createGhostAvatar(UUID ghostID, Object ghostPosition2) {
+private void createGhostAvatar(UUID ghostID, Vector3D ghostPosition2) {
 	
 	
-	Vector3D initPos = new Vector3D();
+	Vector3D initPos = ghostPosition2;
 	
 		GhostAvatar ghost = new GhostAvatar(ghostID, initPos);
 		ghostAvatars.add(ghost);

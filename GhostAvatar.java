@@ -26,7 +26,9 @@ public class GhostAvatar extends TriMesh {
 	
 	public GhostAvatar(UUID id, Vector3D initPosition)
 	{
+		
 		ghostID = id;
+		System.out.println("ghost avatar created: ID: " + ghostID);
 		positionVec = initPosition;
 		testPyramid = new Pyramid();
 		
@@ -74,11 +76,18 @@ public class GhostAvatar extends TriMesh {
 	public void moveAvatar(Vector3D newPos)
 	{
 		
-		//positionVec = newPos;
-		//positionVec.mult(positionMat);
-		//testPyramid.getWorldTranslation().setCol(3,  newPos);
-		//testPyramid.setWorldTranslation(positionMat);
-		testPyramid.translate((float)newPos.getX(), (float)newPos.getY(), (float)newPos.getY());
+		positionVec = newPos;
+		System.out.println("ghostAvatar:moveAvatar(): position vec: " + positionVec.toString());
+		//Matrix3D mat = (shipObj.getLocalTranslation());
+		
+		Matrix3D mat = new Matrix3D();
+		mat.translate(newPos.getX(),  newPos.getY(), newPos.getZ());
+		shipObj.setLocalTranslation(mat);
+		//System.out.println("shipObj translation matrix before:\n" + mat.toString());
+		//mat.setCol(3,positionVec);
+		System.out.println("shipObj translation matrix after:\n" + mat.toString());
+		this.updateWorldTransforms();
+		//testPyramid.translate((float)newPos.getX(), (float)newPos.getY(), (float)newPos.getY());
 	}
 	
 }
