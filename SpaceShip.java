@@ -20,6 +20,7 @@ public class SpaceShip extends MoveableObject{
 	private Laser laser;
 	private Vector<Laser> laserStorage = new Vector<>();
 	private boolean ammoEmpty;
+	private Vector3D locVec;
 	
 	//Build constructor
 	public SpaceShip(IRenderer renderer, IDisplaySystem display){
@@ -67,6 +68,12 @@ public class SpaceShip extends MoveableObject{
 	}
 
 	public Point3D getLocation() {return location;}
+	
+	public Vector3D getLocationVec()
+		{
+		Vector3D newLoc = new Vector3D(location.getX(), location.getY(), location.getZ());
+		return newLoc;
+		}
 	
 	@Override
 	public void setSpeed(float speed) {
