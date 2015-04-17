@@ -33,6 +33,7 @@ public class GhostAvatar extends TriMesh {
 		testPyramid = new Pyramid();
 		
 		shipObj = loader.loadModel("models/Spaceship.obj");
+		shipObj.scale(0.1f,0.1f,0.1f);
 		shipT = TextureManager.loadTexture2D("textures/playerUV.jpg");
 		shipT.setApplyMode(ApplyMode.Replace);
 		shipObj.setTexture(shipT);
