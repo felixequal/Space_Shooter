@@ -37,11 +37,11 @@ public class GhostAvatar extends TriMesh {
 		shipT = TextureManager.loadTexture2D("textures/playerUV.jpg");
 		shipT.setApplyMode(ApplyMode.Replace);
 		shipObj.setTexture(shipT);
-		
+		shipObj.scale(0.01f, 0.01f, 0.01f);
 		//Sphere testSphere = new Sphere();
 		//testSphere.
 		//Matrix3D positionMat = testPyramid.getLocalTranslation();
-		testPyramid.translate((float)positionVec.getX(), (float)positionVec.getY(), (float)positionVec.getZ());
+		//testPyramid.translate((float)positionVec.getX(), (float)positionVec.getY(), (float)positionVec.getZ());
 		//testPyramid.setColor(Color.BLUE);
 		//testPyramid.setLocalTranslation(positionMat);
 		//testPyramid.translate(initPosition.getX(), initPosition.getY(), initPosition.getZ());
@@ -78,7 +78,7 @@ public class GhostAvatar extends TriMesh {
 	{
 		
 		positionVec = newPos;
-		System.out.println("ghostAvatar:moveAvatar(): position vec: " + positionVec.toString());
+		System.out.printf("ghostAvatar:moveAvatar(): position vec: %s\n",positionVec.toString());
 		//Matrix3D mat = (shipObj.getLocalTranslation());
 		
 		Matrix3D mat = new Matrix3D();
@@ -86,8 +86,8 @@ public class GhostAvatar extends TriMesh {
 		shipObj.setLocalTranslation(mat);
 		//System.out.println("shipObj translation matrix before:\n" + mat.toString());
 		//mat.setCol(3,positionVec);
-		System.out.println("shipObj translation matrix after:\n" + mat.toString());
-		this.updateWorldTransforms();
+		//System.out.println("shipObj translation matrix after:\n" + mat.toString());
+		//this.updateWorldTransforms();
 		//testPyramid.translate((float)newPos.getX(), (float)newPos.getY(), (float)newPos.getY());
 	}
 	
