@@ -28,7 +28,7 @@ public class MoveForwardAction extends AbstractInputAction
 		}
 		Point3D loc = ship.getLocation();
 		Vector3D newLoc = new Vector3D(loc.getX(), loc.getY(), loc.getZ());
-		game.sendMoveMessage(newLoc);
+		//game.sendMoveMessage(newLoc);
 	}
 
 }
