@@ -70,6 +70,10 @@ public class MyClient extends GameConnectionClient
 			Vector3D ghostVector = new Vector3D(x,y,z); 
 			// extract ghost x,y,z, position from message, then:
 			createGhostAvatar(ghostID, ghostVector);
+			for(GhostAvatar list: ghostAvatars)
+				{
+			System.out.println("ghost avatar UUID: " + list.getGhostID() + " \nPosition: " + list.getPositionVec());
+				}
 		}
 		if(msgTokens[0].compareTo("wsds") == 0)
 			// receive “create...”
@@ -92,17 +96,18 @@ public class MyClient extends GameConnectionClient
 			Vector3D ghostVector = new Vector3D(x,y,z);
 			//System.out.println("move vector from other client: " + ghostVector.toString());
 			// extract ghost x,y,z, position from message, then:
-			int q = ghostAvatars.indexOf(ghostID);
-			if(q>-1) ghostAvatars.get(q).moveAvatar(ghostVector);
+			//int q = ghostAvatars.indexOf(ghostID);
+			//if(q>-1) ghostAvatars.get(q).moveAvatar(ghostVector);
 			
 			for(GhostAvatar check: ghostAvatars)
 				{
-					if(check.getGhostID() == ghostID)
+					if(check.getGhostID().equals(ghostID))
 						{
-							System.out.println("found correct ghost. Moving: " + ghostID);
+							//System.out.println("found correct ghost. Moving: " + ghostID);
 							check.moveAvatar(ghostVector);
 						}
-					check.moveAvatar(ghostVector);}
+					//check.moveAvatar(ghostVector);
+					}
 				/*
 					if (check.getGhostID() == ghostID){
 						System.out.println("Found ghost avatar. moving "+ghostID);
