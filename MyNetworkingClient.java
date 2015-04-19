@@ -203,8 +203,11 @@ public class MyNetworkingClient extends BaseGame{
 	public void update(float elapsedTimeMS){
 		//Update ship's movement according to speed
 		ship.move();
+		if(thisClient != null) 
+			{
 		thisClient.sendMoveMessage(ship.getLocationVec());
 		thisClient.processPackets();
+			}
 		station.rotateStation();
 		//Update SkyBox according to ship's position
 		Point3D camLoc = ship.getCamera().getLocation();

@@ -40,23 +40,23 @@ int numberOfClients = 0;
 	@Override
 	public void processPacket(Object o, InetAddress senderIP, int sndPort)
 	{
+	try{
 		String message = (String) o;
 		String[] msgTokens = message.split(",");
 		if(msgTokens.length > 0)
-		{ if(msgTokens[0].compareTo("bye") == 0) // receive “bye”
-		{ // format: bye,localid
-	
-			UUID clientID = UUID.fromString(msgTokens[1]);
-			System.out.println("Server: Client leaving - recieved bye message, sending bye messages to others ");
-			sendByeMessages(clientID);
-			super.removeClient(clientID);
-			numberOfClients--;
-			System.out.println("removed client from clientList - ");
-			System.out.println("Server: Total clients connected: " + numberOfClients);
-			
+			{ 
+			if(msgTokens[0].compareTo("bye") == 0) // receive “bye”
+				{
+				UUID clientID = UUID.fromString(msgTokens[1]);
+				System.out.println("Server: Client leaving - recieved bye message, sending bye messages to others ");
+				sendByeMessages(clientID);
+				super.removeClient(clientID);
+				numberOfClients--;
+				System.out.println("removed client from clientList - ");
+				System.out.println("Server: Total clients connected: " + numberOfClients);
 				}
-			
-		}
+			}
+		
 		if(msgTokens[0].compareTo("create") == 0) //receive “create”
 		{ // format: create,localid,x,y,z
 			UUID clientID = UUID.fromString(msgTokens[1]);
@@ -87,6 +87,7 @@ int numberOfClients = 0;
 			sendMoveMessages(clientID, pos);
 			//sendWantsDetailsMessages(clientID);
 		}
+	}catch (Exception e) {e.printStackTrace();}
 		
 	}
 
