@@ -3,6 +3,7 @@ package space_shooter;
 import graphicslib3D.Point3D;
 import graphicslib3D.Vector3D;
 
+import java.util.Random;
 import java.util.Vector;
 
 import sage.camera.ICamera;
@@ -11,7 +12,9 @@ import sage.renderer.IRenderer;
 import sage.scene.HUDImage;
 
 public class SpaceShip extends MoveableObject{
-	private Point3D location = new Point3D(20,2,20);
+
+   Random rand;
+	private Point3D location;
 	private ICamera camera;
 	private IRenderer renderer;
 	private IDisplaySystem display;
@@ -26,7 +29,8 @@ public class SpaceShip extends MoveableObject{
 	public SpaceShip(IRenderer renderer, IDisplaySystem display){
 		this.renderer = renderer;
 		this.display = display;
-		
+		rand = new Random(50);
+		location = new Point3D(rand.nextDouble(),2,rand.nextDouble());
 		camera = display.getRenderer().getCamera();
 		camera.setPerspectiveFrustum(45,1,0.01,1000);
 		speed = 0.0f;

@@ -30,6 +30,7 @@ int numberOfClients = 0;
 		System.out.println("client joined:" + ci + " -  " + clientID.toString());
 		super.addClient(ci, clientID);
 		numberOfClients++;
+		System.out.println("Server: Total clients connected: " + numberOfClients);
 		sendJoinedMessage(clientID, true);
 		
 	} 
@@ -51,6 +52,7 @@ int numberOfClients = 0;
 			super.removeClient(clientID);
 			numberOfClients--;
 			System.out.println("removed client from clientList - ");
+			System.out.println("Server: Total clients connected: " + numberOfClients);
 			
 				}
 			
