@@ -2,6 +2,7 @@ package space_shooter;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.util.UUID;
 import sage.networking.server.GameConnectionServer;
 import sage.networking.server.IClientInfo;
@@ -40,14 +41,16 @@ int numberOfClients = 0;
 	@Override
 	public void processPacket(Object o, InetAddress senderIP, int sndPort)
 	{
-	try{
+	
 		String message = (String) o;
 		String[] msgTokens = message.split(",");
+		UUID clientID = UUID.fromString(msgTokens[1]);
+		
 		if(msgTokens.length > 0)
 			{ 
 			if(msgTokens[0].compareTo("bye") == 0) // receive “bye”
 				{
-				UUID clientID = UUID.fromString(msgTokens[1]);
+				//UUID clientID = UUID.fromString(msgTokens[1]);
 				System.out.println("Server: Client leaving - recieved bye message, sending bye messages to others ");
 				sendByeMessages(clientID);
 				super.removeClient(clientID);
@@ -59,14 +62,16 @@ int numberOfClients = 0;
 		
 		if(msgTokens[0].compareTo("create") == 0) //receive “create”
 		{ // format: create,localid,x,y,z
-			UUID clientID = UUID.fromString(msgTokens[1]);
+			//UUID clientID = UUID.fromString(msgTokens[1]);
 			String[] pos = {msgTokens[2], msgTokens[3], msgTokens[4]};
+			try{
 			sendCreateMessages(clientID, pos);
 			if(numberOfClients > 1)
 				{
 				System.out.println("Server: client sent create message, requesting details from others (sending wsds)");
 				sendWantsDetailsMessages(clientID);
 				}
+			}catch (Exception e) {e.printStackTrace(); sendByeMessages(clientID); super.removeClient(clientID);}
 		}
 		
 		if(msgTokens[0].compareTo("dsfr") == 0) // receive “details for”
@@ -77,17 +82,21 @@ int numberOfClients = 0;
 		UUID to = UUID.fromString(msgTokens[2]);
 		System.out.println("from: " + from.toString() + " to:" + to.toString());
 		String[] pos = {msgTokens[3], msgTokens[4], msgTokens[5]};
+		try{
 		sndDetailsMsg(from, to, pos);
+		}catch (Exception e) {e.printStackTrace(); sendByeMessages(clientID); super.removeClient(clientID);}
 		}
 		
 		if(msgTokens[0].compareTo("move") == 0) // receive “move”
 		{ 
-			UUID clientID = UUID.fromString(msgTokens[1]);
+		//	UUID clientID = UUID.fromString(msgTokens[1]);
 			String[] pos = {msgTokens[2], msgTokens[3], msgTokens[4]};
+			try{
 			sendMoveMessages(clientID, pos);
+			}catch (Exception e) {e.printStackTrace(); sendByeMessages(clientID); super.removeClient(clientID);}
 			//sendWantsDetailsMessages(clientID);
 		}
-	}catch (Exception e) {e.printStackTrace();}
+	
 		
 	}
 
@@ -126,7 +135,7 @@ int numberOfClients = 0;
 			message += "," + position[2];
 			sendPacket(message, remoteID);
 			}
-		catch (IOException e) { e.printStackTrace();}
+		catch (IOException e) { e.printStackTrace(); }
 		}
 
 	public void sendWantsDetailsMessages(UUID clientID)
@@ -136,7 +145,7 @@ int numberOfClients = 0;
 			String message = new String("wsdf," + clientID.toString());
 			forwardPacketToAll(message, clientID);
 			} 
-		catch (IOException e) { e.printStackTrace();} 
+		catch (IOException e) { e.printStackTrace(); } 
 		}
 
 
@@ -150,8 +159,7 @@ int numberOfClients = 0;
 			//System.out.println("server sending move messages" + message);
 			forwardPacketToAll(message, clientID);
 			}
-			catch (IOException e) { e.printStackTrace();
-			}  
+			catch (IOException e) { e.printStackTrace(); }  
 	}
 
 
@@ -162,7 +170,7 @@ int numberOfClients = 0;
 			System.out.println("server sending bye messages");
 			forwardPacketToAll(message, clientID);
 			}
-			catch (IOException e) { e.printStackTrace();
+			catch (IOException e) { e.printStackTrace(); ;
 			}
 	}
 
