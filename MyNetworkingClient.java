@@ -63,11 +63,12 @@ public class MyNetworkingClient extends BaseGame{
 			}
 		try
 			{ thisClient = new MyClient(InetAddress.getByName(serverAddress), serverPort, ProtocolType.TCP, this);
-			}
-			catch (UnknownHostException e) { e.printStackTrace();
-			}
+			}catch (UnknownHostException e) { e.printStackTrace();}
 			catch (IOException e) { e.printStackTrace(); }
-			if(thisClient != null) { thisClient.sendJoinMessage(); }
+			if(thisClient != null) 
+				{ 
+				thisClient.sendJoinMessage(); 
+				}
 		
 		
 		im = getInputManager();

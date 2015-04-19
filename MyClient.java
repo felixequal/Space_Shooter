@@ -16,10 +16,10 @@ import sage.scene.SceneNode;
 public class MyClient extends GameConnectionClient
 {
 	private MyNetworkingClient game;
-	private UUID id;
+	private UUID id, ghostID;
 	private ArrayList<GhostAvatar> ghostAvatars;
-	private Object ghostPosition;
-	private UUID ghostID;
+	//private Object ghostPosition;
+	private double x, y, z;
 	//GhostAvatar ghost;
 	
 	public MyClient(InetAddress remAddr, int remPort, ProtocolType pType, MyNetworkingClient game) throws IOException
@@ -36,10 +36,9 @@ public class MyClient extends GameConnectionClient
 	{
 		String message = (String) msg;
 		String[] msgTokens = message.split(",");
+//------------------------ RECEIVE “join”----------------------------------------------------------
 		if(msgTokens[0].compareTo("join") ==0)
-			// receive “join”
 		{
-			// format: join, success or join, failure
 			if(msgTokens[1].compareTo("success") == 0)
 			{
 				game.setIsConnected(true);
@@ -49,74 +48,72 @@ public class MyClient extends GameConnectionClient
 			if(msgTokens[1].compareTo("failure") == 0)
 				game.setIsConnected(false);
 		}
-		if(msgTokens[0].compareTo("bye") == 0)
-			
-		{
-			// format: bye, remoteId
-			ghostID = UUID.fromString(msgTokens[1]);
-			System.out.println("received bye message from: " + ghostID);
-			removeGhostAvatar(ghostID);
-		}
-		if
-		(msgTokens[0].compareTo("create") == 0)
-			// receive “details for”
+		
+		
+//------------------------ RECEIVE “create”----------------------------------------------------------
+		if(msgTokens[0].compareTo("create") == 0)
 		{
 			System.out.println("Received create message from server");
-			// format: create, remoteId, x,y,z or dsfr, remoteId, x,y,z
 			ghostID = UUID.fromString(msgTokens[1]);
-			double x = Double.parseDouble(msgTokens[2]);
-			double y = Double.parseDouble(msgTokens[3]);
-			double z = Double.parseDouble(msgTokens[4]);
+			x = Double.parseDouble(msgTokens[2]);
+			y = Double.parseDouble(msgTokens[3]);
+			z = Double.parseDouble(msgTokens[4]);
 			Vector3D ghostVector = new Vector3D(x,y,z); 
-			// extract ghost x,y,z, position from message, then:
 			createGhostAvatar(ghostID, ghostVector);
 			for(GhostAvatar list: ghostAvatars)
 				{
 			System.out.println("ghost avatar UUID: " + list.getGhostID() + " \nPosition: " + list.getPositionVec());
 				}
 		}
-		if(msgTokens[0].compareTo("wsds") == 0)
-			// receive “create...”
-		{
-			//etc.....
-		}
-		if(msgTokens[0].compareTo("wsds") == 0)
-			// receive “wants...”
-		{
-			//etc.....
-		}
-		if(msgTokens[0].compareTo("move") == 0)
-			// receive “move”
-		{
+		
+		if(msgTokens[0].compareTo("wsdf") == 0)
+			{
+			System.out.println("Client: received wants-details-for message, send details to server (dsfr)");
+			ghostID = UUID.fromString(msgTokens[1]);
+			sendDetails(id, ghostID, game.getPlayerPosition());
+			}
+			
+//------------------------ RECEIVE “dsfr”----------------------------------------------------------
+		if(msgTokens[0].compareTo("dsfr") == 0)
+			{
+			System.out.println("Received dsfr message from server");
+			ghostID = UUID.fromString(msgTokens[1]);
+			x = Double.parseDouble(msgTokens[2]);
+			y = Double.parseDouble(msgTokens[3]);
+			z = Double.parseDouble(msgTokens[4]);
+			Vector3D dsfrVector = new Vector3D(x,y,z);
+			createGhostAvatar(ghostID, dsfrVector);
+			for(GhostAvatar list: ghostAvatars)
+				{
+				System.out.println("ghost avatar UUID: " + list.getGhostID() + " \nPosition: " + list.getPositionVec());
+				}
+			}
+//------------------------ RECEIVE “move”----------------------------------------------------------
+		if(msgTokens[0].compareTo("move") == 0) 
+			{
 			ghostID = UUID.fromString(msgTokens[1]);
 			//System.out.println("Received move message from server from: " + ghostID);
-			double x = Double.parseDouble(msgTokens[2]);
-			double y = Double.parseDouble(msgTokens[3]);
-			double z = Double.parseDouble(msgTokens[4]);
-			Vector3D ghostVector = new Vector3D(x,y,z);
-			//System.out.println("move vector from other client: " + ghostVector.toString());
-			// extract ghost x,y,z, position from message, then:
-			//int q = ghostAvatars.indexOf(ghostID);
-			//if(q>-1) ghostAvatars.get(q).moveAvatar(ghostVector);
-			
+			x = Double.parseDouble(msgTokens[2]);
+			y = Double.parseDouble(msgTokens[3]);
+			z = Double.parseDouble(msgTokens[4]);
+			Vector3D ghostcrVector = new Vector3D(x,y,z);
+			//System.out.println("move vector from other client: " + ghostVector.toString());			
 			for(GhostAvatar check: ghostAvatars)
 				{
-					if(check.getGhostID().equals(ghostID))
-						{
-							//System.out.println("found correct ghost. Moving: " + ghostID);
-							check.moveAvatar(ghostVector);
-						}
-					//check.moveAvatar(ghostVector);
+				if(check.getGhostID().equals(ghostID))
+					{
+					//System.out.println("found correct ghost. Moving: " + ghostID);
+					check.moveAvatar(ghostcrVector);
 					}
-				/*
-					if (check.getGhostID() == ghostID){
-						System.out.println("Found ghost avatar. moving "+ghostID);
-						}
 				}
-				*/
-			//ghostAvatars.
-			//createGhostAvatar(ghostID, ghostPosition);
-		}
+			}
+//------------------------ RECEIVE “bye”----------------------------------------------------------		
+		if(msgTokens[0].compareTo("bye") == 0)
+			{
+				ghostID = UUID.fromString(msgTokens[1]);
+				System.out.println("received bye message from: " + ghostID);
+				removeGhostAvatar(ghostID);
+			}
 	}
 
 private void createGhostAvatar(UUID ghostID, Vector3D ghostPosition2) {
@@ -169,8 +166,16 @@ public void sendByeMessage()
 
 	catch (IOException e) { e.printStackTrace(); } 
 }
-public void sendDetailsForMessage(UUID remId, Vector3D pos)
-{ // etc….. 
+
+public void sendDetails(UUID localID, UUID remID, Vector3D pos)
+{
+System.out.println("Client:sending details to " + remID.toString() + " from " + localID.toString());
+try
+	{ String message = new String("dsfr," + id.toString() + "," + remID.toString());
+	message += "," + pos.getX()+"," + pos.getY() + "," + pos.getZ();
+	sendPacket(message);
+	}
+	catch (IOException e) { e.printStackTrace(); }
 }
 
 public void sendMoveMessage(Vector3D pos)
