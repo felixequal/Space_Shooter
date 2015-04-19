@@ -32,10 +32,14 @@ int numberOfClients = 0;
 		super.addClient(ci, clientID);
 		numberOfClients++;
 		System.out.println("Server: Total clients connected: " + numberOfClients);
-		sendJoinedMessage(clientID, true);
-		
-	} 
-	} 
+		try
+			{
+			sendJoinedMessage(clientID, true);
+		} catch (SocketException e) {}
+	}
+	}
+	
+	
 	}
 
 	@Override
@@ -71,7 +75,13 @@ int numberOfClients = 0;
 				System.out.println("Server: client sent create message, requesting details from others (sending wsds)");
 				sendWantsDetailsMessages(clientID);
 				}
-			}catch (Exception e) {e.printStackTrace(); sendByeMessages(clientID); super.removeClient(clientID);}
+			}catch (Exception e) {e.printStackTrace();  
+			//super.removeClient(clientID);
+			//try{
+			//super.getServerSocket().close();
+			//} catch (IOException f) {f.printStackTrace();}
+			
+			}
 		}
 		
 		if(msgTokens[0].compareTo("dsfr") == 0) // receive “details for”
@@ -84,7 +94,14 @@ int numberOfClients = 0;
 		String[] pos = {msgTokens[3], msgTokens[4], msgTokens[5]};
 		try{
 		sndDetailsMsg(from, to, pos);
-		}catch (Exception e) {e.printStackTrace(); sendByeMessages(clientID); super.removeClient(clientID);}
+		}catch (Exception e) 
+			{
+			e.printStackTrace(); 
+			//super.removeClient(clientID);
+			//try{
+			//super.getServerSocket().close();
+			//} catch (IOException f) {f.printStackTrace();}
+			}
 		}
 		
 		if(msgTokens[0].compareTo("move") == 0) // receive “move”
@@ -93,14 +110,23 @@ int numberOfClients = 0;
 			String[] pos = {msgTokens[2], msgTokens[3], msgTokens[4]};
 			try{
 			sendMoveMessages(clientID, pos);
-			}catch (Exception e) {e.printStackTrace(); sendByeMessages(clientID); super.removeClient(clientID);}
-			//sendWantsDetailsMessages(clientID);
+			}catch (SocketException e) {
+			//e.printStackTrace();
+			System.out.println("Server: Throwing error in Process Packet: ");
+			System.out.println(e.toString());
+			System.out.println("Server: END THROW: Process Packet: ");
+			//super.removeClient(clientID);
+			//try{
+			//super.getServerSocket().close();
+			//} catch (IOException f) {f.printStackTrace();}
+			
+			}
 		}
 	
 		
 	}
 
-	public void sendJoinedMessage(UUID clientID, boolean success)
+	public void sendJoinedMessage(UUID clientID, boolean success) throws SocketException
 	{ // format: join, success or join, failure
 		try
 		{ String message = new String("join,");
@@ -108,10 +134,10 @@ int numberOfClients = 0;
 		else message += "failure";
 		sendPacket(message, clientID);
 		}
-		catch (IOException e) { e.printStackTrace();} 
+		catch (IOException e) { e.printStackTrace();}
 	}
 
-	public void sendCreateMessages(UUID clientID, String[] position)
+	public void sendCreateMessages(UUID clientID, String[] position) throws SocketException
 	{ // format: create, remoteId, x, y, z
 		try
 			{ 
@@ -125,7 +151,7 @@ int numberOfClients = 0;
 		catch (IOException e) { e.printStackTrace();} 
 	}
 
-	public void sndDetailsMsg(UUID clientID, UUID remoteID, String[] position)
+	public void sndDetailsMsg(UUID clientID, UUID remoteID, String[] position) throws SocketException
 		{ 
 		try
 			{ 
@@ -138,7 +164,7 @@ int numberOfClients = 0;
 		catch (IOException e) { e.printStackTrace(); }
 		}
 
-	public void sendWantsDetailsMessages(UUID clientID)
+	public void sendWantsDetailsMessages(UUID clientID) throws SocketException
 		{ 
 		try
 			{ 
@@ -149,29 +175,48 @@ int numberOfClients = 0;
 		}
 
 
-	public void sendMoveMessages(UUID clientID, String[] position)
+	public void sendMoveMessages(UUID clientID, String[] position) throws SocketException
 	{ 
 		try
-			{ String message = new String("move," + clientID.toString());
+			{ 
+			String message = new String("move," + clientID.toString());
 			message += "," + position[0];
 			message += "," + position[1];
 			message += "," + position[2];
 			//System.out.println("server sending move messages" + message);
-			forwardPacketToAll(message, clientID);
+			try
+				{
+				forwardPacketToAll(message, clientID);
+				}
+			catch (SocketException e) 
+				{
+				e.printStackTrace(); 
+				super.removeClient(clientID);
+				super.getServerSocket().close();
+				}
 			}
-			catch (IOException e) { e.printStackTrace(); }  
+		catch (IOException e) { e.printStackTrace();}  
 	}
 
 
 	public void sendByeMessages(UUID clientID)
 	{ // etc….. 
 		try
-			{ String message = new String("bye," + clientID.toString());
+			{ 
+			String message = new String("bye," + clientID.toString());
 			System.out.println("server sending bye messages");
-			forwardPacketToAll(message, clientID);
+			try
+				{
+				forwardPacketToAll(message, clientID);
+				}
+			catch (SocketException e) 
+				{
+				e.printStackTrace(); 
+				super.removeClient(clientID);
+				super.getServerSocket().close();
+				}
 			}
-			catch (IOException e) { e.printStackTrace(); ;
+			catch (IOException e) { e.printStackTrace();}
 			}
-	}
 
 }
