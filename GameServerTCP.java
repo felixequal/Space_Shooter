@@ -5,8 +5,13 @@ import java.net.InetAddress;
 import java.util.UUID;
 import sage.networking.server.GameConnectionServer;
 import sage.networking.server.IClientInfo;
+
+
 public class GameServerTCP extends GameConnectionServer<UUID>
 {
+
+int numberOfClients = 0;
+
 	public GameServerTCP(int localPort) throws IOException
 	{ 
 		super(localPort, ProtocolType.TCP); 
@@ -23,10 +28,8 @@ public class GameServerTCP extends GameConnectionServer<UUID>
 	{ // format: join,localid
 		UUID clientID = UUID.fromString(messageTokens[1]);
 		System.out.println("client joined:" + ci + " -  " + clientID.toString());
-<<<<<<< HEAD
-=======	
->>>>>>> origin/Networking
 		super.addClient(ci, clientID);
+		numberOfClients++;
 		sendJoinedMessage(clientID, true);
 		
 	} 
@@ -43,24 +46,38 @@ public class GameServerTCP extends GameConnectionServer<UUID>
 		{ // format: bye,localid
 	
 			UUID clientID = UUID.fromString(msgTokens[1]);
-			System.out.println("Client leaving - recieved bye message, sending bye messages to others ");
+			System.out.println("Server: Client leaving - recieved bye message, sending bye messages to others ");
 			sendByeMessages(clientID);
 			super.removeClient(clientID);
+			numberOfClients--;
 			System.out.println("removed client from clientList - ");
 			
 				}
 			
 		}
-		if(msgTokens[0].compareTo("create") == 0) // receive “create”
+		if(msgTokens[0].compareTo("create") == 0) //receive “create”
 		{ // format: create,localid,x,y,z
 			UUID clientID = UUID.fromString(msgTokens[1]);
 			String[] pos = {msgTokens[2], msgTokens[3], msgTokens[4]};
 			sendCreateMessages(clientID, pos);
-			sendWantsDetailsMessages(clientID);
+			if(numberOfClients > 1)
+				{
+				System.out.println("Server: client sent create message, requesting details from others (sending wsds)");
+				sendWantsDetailsMessages(clientID);
+				}
 		}
+		
 		if(msgTokens[0].compareTo("dsfr") == 0) // receive “details for”
-		{ // etc….. 
+		{
+		System.out.println("Server: received details-for message, sending it to recipient");
+		
+		UUID from = UUID.fromString(msgTokens[1]);
+		UUID to = UUID.fromString(msgTokens[2]);
+		System.out.println("from: " + from.toString() + " to:" + to.toString());
+		String[] pos = {msgTokens[3], msgTokens[4], msgTokens[5]};
+		sndDetailsMsg(from, to, pos);
 		}
+		
 		if(msgTokens[0].compareTo("move") == 0) // receive “move”
 		{ 
 			UUID clientID = UUID.fromString(msgTokens[1]);
@@ -79,33 +96,45 @@ public class GameServerTCP extends GameConnectionServer<UUID>
 		else message += "failure";
 		sendPacket(message, clientID);
 		}
-		catch (IOException e) { e.printStackTrace();
-		} 
+		catch (IOException e) { e.printStackTrace();} 
 	}
 
 	public void sendCreateMessages(UUID clientID, String[] position)
 	{ // format: create, remoteId, x, y, z
 		try
-		{ String message = new String("create," + clientID.toString());
-		message += "," + position[0];
-		message += "," + position[1];
-		message += "," + position[2];
-		System.out.println("server received create request from: " + clientID.toString()+ " sending create messages");
-		forwardPacketToAll(message, clientID);
-		}
-		catch (IOException e) { e.printStackTrace();
-		} 
+			{ 
+			String message = new String("create," + clientID.toString());
+			message += "," + position[0];
+			message += "," + position[1];
+			message += "," + position[2];
+			System.out.println("server received create request from: " + clientID.toString()+ " sending create messages");
+			forwardPacketToAll(message, clientID);
+			}
+		catch (IOException e) { e.printStackTrace();} 
 	}
 
-	public void sndDetailsMsg(UUID clientID, UUID remoteId, String[] position)
-	{ 
-		// etc….. 
-	}
+	public void sndDetailsMsg(UUID clientID, UUID remoteID, String[] position)
+		{ 
+		try
+			{ 
+			String message = new String("dsfr," + clientID.toString());
+			message += "," + position[0];
+			message += "," + position[1];
+			message += "," + position[2];
+			sendPacket(message, remoteID);
+			}
+		catch (IOException e) { e.printStackTrace();}
+		}
 
 	public void sendWantsDetailsMessages(UUID clientID)
-	{ 
-		// etc….. 
-	}
+		{ 
+		try
+			{ 
+			String message = new String("wsdf," + clientID.toString());
+			forwardPacketToAll(message, clientID);
+			} 
+		catch (IOException e) { e.printStackTrace();} 
+		}
 
 
 	public void sendMoveMessages(UUID clientID, String[] position)
@@ -115,7 +144,7 @@ public class GameServerTCP extends GameConnectionServer<UUID>
 			message += "," + position[0];
 			message += "," + position[1];
 			message += "," + position[2];
-			System.out.println("server sending move messages" + message);
+			//System.out.println("server sending move messages" + message);
 			forwardPacketToAll(message, clientID);
 			}
 			catch (IOException e) { e.printStackTrace();
