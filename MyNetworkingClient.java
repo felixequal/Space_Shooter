@@ -236,7 +236,10 @@ public class MyNetworkingClient extends BaseGame{
 	public void shutdown()
 	{	
 		super.shutdown();
+		if(thisClient != null)
+			{
 		 thisClient.sendByeMessage();
+			
 		 try
 			{
 				thisClient.shutdown();
@@ -253,6 +256,6 @@ public class MyNetworkingClient extends BaseGame{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		 
+			}
 	}
 }

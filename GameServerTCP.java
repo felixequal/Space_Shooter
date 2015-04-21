@@ -57,7 +57,7 @@ int numberOfClients = 0;
 				//UUID clientID = UUID.fromString(msgTokens[1]);
 				System.out.println("Server: Client leaving - recieved bye message, sending bye messages to others ");
 				sendByeMessages(clientID);
-				super.removeClient(clientID);
+				removeClient(clientID);
 				numberOfClients--;
 				System.out.println("removed client from clientList - ");
 				System.out.println("Server: Total clients connected: " + numberOfClients);
