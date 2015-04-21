@@ -37,7 +37,6 @@ public class GhostAvatar extends TriMesh {
 		shipT = TextureManager.loadTexture2D("textures/playerUV.jpg");
 		shipT.setApplyMode(ApplyMode.Replace);
 		shipObj.setTexture(shipT);
-		shipObj.scale(0.1f, 0.1f, 0.1f);
 		//Sphere testSphere = new Sphere();
 		//testSphere.
 		//Matrix3D positionMat = testPyramid.getLocalTranslation();
@@ -45,7 +44,7 @@ public class GhostAvatar extends TriMesh {
 		//testPyramid.setColor(Color.BLUE);
 		//testPyramid.setLocalTranslation(positionMat);
 		//testPyramid.translate(initPosition.getX(), initPosition.getY(), initPosition.getZ());
-		
+		getAvatar();
 	}
 	
 	public Vector3D getPositionVec()

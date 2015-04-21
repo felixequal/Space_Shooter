@@ -13,6 +13,7 @@ import sage.input.IInputManager;
 import sage.networking.IGameConnection.ProtocolType;
 import sage.renderer.IRenderer;
 import sage.scene.SceneNode;
+import sage.scene.TriMesh;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
@@ -35,6 +36,7 @@ public class MyNetworkingClient extends BaseGame{
 	private SpaceStation station;
 	MyClient thisClient;
 	InetAddress remAddr;
+	long start;
 
 	private ScriptEngineManager factory;
 	private String worldScript = "scripts/SetupWorld.js";
@@ -118,6 +120,7 @@ public class MyNetworkingClient extends BaseGame{
 	
 	
 	public void initGameObjects(){
+		start = System.nanoTime();
 	//Add SkyBox w/ ZBuffer disabled
 		skyBox = new Space(renderer);
 		skyBox.scale(500.0f,500.0f,500.0f);
@@ -135,11 +138,17 @@ public class MyNetworkingClient extends BaseGame{
 		addGameWorldObject(station.loadObject());
 	}
 
-	@Override
-	public void addGameWorldObject(SceneNode obj)
+	 public void addGameWorldObject(SceneNode obj)
 	{
 		super.addGameWorldObject(obj);
 	}
+	
+	 public boolean removeGameWorldObject(SceneNode obj)
+	 {
+		 boolean b = super.removeGameWorldObject(obj);
+		 return b;
+	 }
+	
 	private void runScript(ScriptEngine engine, String scriptFileName)
 	{
 		try
@@ -177,6 +186,7 @@ public class MyNetworkingClient extends BaseGame{
 ///////////////////////////////////////////////////////////////////////////////////////////////////////		
 		kbName = im.getKeyboardName();
 		im.associateAction(kbName, Key.W, forward,IInputManager.INPUT_ACTION_TYPE.ON_PRESS_AND_RELEASE);
+		//im.associateAction(kbName, Key.Q, removeStation ,IInputManager.INPUT_ACTION_TYPE.ON_PRESS_AND_RELEASE)
 		im.associateAction(kbName, Key.S, backward,IInputManager.INPUT_ACTION_TYPE.ON_PRESS_AND_RELEASE);
 		im.associateAction(kbName, Key.DOWN, pitchUp,IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
 		im.associateAction(kbName, Key.UP, pitchDown,IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
@@ -201,12 +211,31 @@ public class MyNetworkingClient extends BaseGame{
 	
 	@Override
 	public void update(float elapsedTimeMS){
+		/*long end = System.nanoTime();
+		System.out.println("countdown:" + ((end-start)/1000000000));
+		if (((end - start)/1000000000) > 15)
+			{
+				System.out.println("Removing Station!");
+				removeGameWorldObject(station.loadObject());
+				
+			}
+		*/
 		//Update ship's movement according to speed
 		ship.move();
 		if(thisClient != null) 
 			{
-		thisClient.sendMoveMessage(ship.getLocationVec());
-		thisClient.processPackets();
+		/*	if (thisClient.checkAvatarsToDelete() == true)
+				{
+					
+					//GhostAvatar g = thisClient.getGhostToRemove();
+					System.out.println("Deleting ghost avatar object from gameworld in MNC");
+				boolean b = removeGameWorldObject(thisClient.getGhostToRemove());
+				System.out.println("Removed ghost?: " + b);
+				}
+		*/
+			thisClient.processPackets();
+			thisClient.sendMoveMessage(ship.getLocationVec());
+			
 			}
 		station.rotateStation();
 		//Update SkyBox according to ship's position

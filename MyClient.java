@@ -11,16 +11,19 @@ import java.util.Vector;
 
 import sage.networking.client.GameConnectionClient;
 import sage.scene.SceneNode;
+import sage.scene.TriMesh;
 
 
 public class MyClient extends GameConnectionClient
 {
 	private MyNetworkingClient game;
 	private UUID id, ghostID;
+	GhostAvatar gA;
 	private ArrayList<GhostAvatar> ghostAvatars;
 	//private Object ghostPosition;
 	private double x, y, z;
 	//GhostAvatar ghost;
+	private boolean removalFlag;
 	
 	public MyClient(InetAddress remAddr, int remPort, ProtocolType pType, MyNetworkingClient game) throws IOException
 	{
@@ -121,14 +124,14 @@ private void createGhostAvatar(UUID ghostID, Vector3D ghostPosition2) {
 	
 	Vector3D initPos = ghostPosition2;
 	
-		GhostAvatar gA = new GhostAvatar(ghostID, initPos);
+		gA = new GhostAvatar(ghostID, initPos);
 		ghostAvatars.add(gA);
 		game.addGameWorldObject(gA.getAvatar());
 		
 	}
 private void removeGhostAvatar(UUID ghostID) 
 	{
-		
+		int gAIndex = -1;
 	/*	Iterator iter = game.getGameWorld().iterator();
 		while(iter.hasNext())
 			{
@@ -138,8 +141,46 @@ private void removeGhostAvatar(UUID ghostID)
 		game.getGameWorld().iterator().remove();
 			}
 			*/
+		for(GhostAvatar findGhost: ghostAvatars)
+			{
+				gAIndex++;
+				if (findGhost.getGhostID() == ghostID)
+					{
+					break;
+					}
+			}
+		
+		System.out.println("gAIndex: " + gAIndex);
+		gA = ghostAvatars.get(gAIndex);
+		//removalFlag = true;
+		//gAIndex = -1;
+		game.removeGameWorldObject(gA.getAvatar());
 		ghostAvatars.remove(ghostID);
+		
 	}
+
+public void setRemovalFlag(boolean b)
+{
+	removalFlag = b;
+}
+
+public boolean checkAvatarsToDelete()
+{
+	if (removalFlag == false)
+		{
+			gA = null;
+			return removalFlag;
+		}
+	return removalFlag;
+}
+
+public SceneNode getGhostToRemove()
+{
+	removalFlag = false;
+	System.out.println("removeGhost:" + gA.getGhostID());
+	return gA;
+}
+
 public void sendCreateMessage(Vector3D pos)
 { // format: (create, localId, x,y,z)
 	try
