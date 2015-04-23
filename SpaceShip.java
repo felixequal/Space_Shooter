@@ -30,7 +30,7 @@ public class SpaceShip extends MoveableObject{
 		this.renderer = renderer;
 		this.display = display;
 		rand = new Random(50);
-		location = new Point3D(rand.nextDouble(),10,rand.nextDouble());
+		location = new Point3D(rand.nextDouble(),4,rand.nextDouble());
 		camera = display.getRenderer().getCamera();
 		camera.setPerspectiveFrustum(45,1,0.01,1000);
 		speed = 0.0f;
