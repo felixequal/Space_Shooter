@@ -42,7 +42,7 @@ public class Terrain {
 		
 		int terrainSize = heightMap.getSize();
 		float cornerHeight = heightMap.getTrueHeightAtPoint(0, 0)*heightScale;
-		Point3D terrainOrigin = new Point3D(0,-cornerHeight,0);
+		Point3D terrainOrigin = new Point3D(0,-cornerHeight,0);	//Will need to pass in object x and z coordinates
 		
 		//create a terrain
 		String name = "Terrain: " + heightMap.getClass().getSimpleName();
