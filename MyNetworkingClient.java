@@ -33,7 +33,7 @@ public class MyNetworkingClient extends BaseGame{
 	private String gpName, kbName;
 	private FindComponents findControls;
 	private SpaceStation station;
-	private Planet planet;
+//	private Planet planet;
 	MyClient thisClient;
 	InetAddress remAddr;
 
@@ -128,10 +128,10 @@ public class MyNetworkingClient extends BaseGame{
 		skyBox.getBuf().setDepthTestingEnabled(true);
 		
 		//Add Planet
-		planet = new Planet();
+	//	planet = new Planet();
 		//planet.scale(.25f, .25f, .25f);
-		planet.translate(0, 0, -999);
-		addGameWorldObject(planet.loadObject());
+	//	planet.translate(0, 0, -999);
+	//	addGameWorldObject(planet.loadObject());
 		
 		//Add other objects
 		ship = new SpaceShip(renderer,display);
@@ -212,7 +212,7 @@ public class MyNetworkingClient extends BaseGame{
 		ship.move();
 		thisClient.processPackets();
 		station.rotateStation();
-		planet.rotatePlanet();
+	//	planet.rotatePlanet();
 		//Update SkyBox according to ship's position
 		Point3D camLoc = ship.getCamera().getLocation();
 		Matrix3D camTranslation = new Matrix3D();
