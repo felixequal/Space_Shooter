@@ -12,37 +12,40 @@ import sage.texture.TextureManager;
 
 public class Terrain {
 	private MyNetworkingClient mnc;
+	private TerrainBlock imageTerrain;
 	
 	public Terrain(MyNetworkingClient mnc){
 		this.mnc = mnc;
-		
 		initTerrain();
 	}
 	
 	private void initTerrain(){
-		ImageBasedHeightMap myHeightMap = new ImageBasedHeightMap("height.jpg");
+		ImageBasedHeightMap myHeightMap = new ImageBasedHeightMap("textures/heightMap.jpg");
 		
-		TerrainBlock imageTerrain = createTerBlock(myHeightMap);
+		imageTerrain = createTerBlock(myHeightMap);
 		
 		TextureState groundState;
-		Texture groundTexture = TextureManager.loadTexture2D("null.jpg");
+		Texture groundTexture = TextureManager.loadTexture2D("textures/mountains.jpg");
 		groundTexture.setApplyMode(sage.texture.Texture.ApplyMode.Replace);
 		groundState = (TextureState)mnc.getRenderer().createRenderState(RenderState.RenderStateType.Texture);
 		groundState.setTexture(groundTexture,0);
 		groundState.setEnabled(true);
 		
 		imageTerrain.setRenderState(groundState);
-		//addGameWorldObject(imageTerrain);
+	}
+	
+	public TerrainBlock getTerrain(){
+		return imageTerrain;
 	}
 	
 	private TerrainBlock createTerBlock(AbstractHeightMap heightMap)
 	{
-		float heightScale = .005f;
+		float heightScale = .008f;
 		Vector3D terrainScale = new Vector3D(0.2,heightScale,0.2);
 		
 		int terrainSize = heightMap.getSize();
 		float cornerHeight = heightMap.getTrueHeightAtPoint(0, 0)*heightScale;
-		Point3D terrainOrigin = new Point3D(0,-cornerHeight,0);	//Will need to pass in object x and z coordinates
+		Point3D terrainOrigin = new Point3D(-20,-cornerHeight,-20);	//Will need to pass in object x and z coordinates
 		
 		//create a terrain
 		String name = "Terrain: " + heightMap.getClass().getSimpleName();

@@ -15,6 +15,7 @@ import sage.renderer.IRenderer;
 import sage.scene.Group;
 import sage.scene.SceneNode;
 import sage.scene.TriMesh;
+import sage.terrain.TerrainBlock;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
@@ -37,6 +38,8 @@ public class MyNetworkingClient extends BaseGame{
 	private SpaceStation station;
 	private Planet planet;
 	private Group planetGrp;
+	private Terrain terrain;
+	private TerrainBlock tBlock;
 	MyClient thisClient;
 	InetAddress remAddr;
 	long start;
@@ -147,6 +150,11 @@ public class MyNetworkingClient extends BaseGame{
 		//Add Space Station
 		station = new SpaceStation();
 		addGameWorldObject(station.loadObject());
+		
+		//Load terrain
+		terrain = new Terrain(this);
+		tBlock = terrain.getTerrain();
+		addGameWorldObject(tBlock);
 	}
 
 	 public void addGameWorldObject(SceneNode obj)
