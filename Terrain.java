@@ -20,12 +20,12 @@ public class Terrain {
 	}
 	
 	private void initTerrain(){
-		ImageBasedHeightMap myHeightMap = new ImageBasedHeightMap("textures/heightMap.jpg");
+		ImageBasedHeightMap myHeightMap = new ImageBasedHeightMap("textures/heightMap.png");
 		
 		imageTerrain = createTerBlock(myHeightMap);
 		
 		TextureState groundState;
-		Texture groundTexture = TextureManager.loadTexture2D("textures/mountains.jpg");
+		Texture groundTexture = TextureManager.loadTexture2D("textures/mars.jpg");
 		groundTexture.setApplyMode(sage.texture.Texture.ApplyMode.Replace);
 		groundState = (TextureState)mnc.getRenderer().createRenderState(RenderState.RenderStateType.Texture);
 		groundState.setTexture(groundTexture,0);
