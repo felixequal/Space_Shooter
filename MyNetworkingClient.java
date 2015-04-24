@@ -12,8 +12,10 @@ import sage.display.IDisplaySystem;
 import sage.input.IInputManager;
 import sage.networking.IGameConnection.ProtocolType;
 import sage.renderer.IRenderer;
+import sage.scene.Group;
 import sage.scene.SceneNode;
 import sage.scene.TriMesh;
+import sage.terrain.TerrainBlock;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
@@ -34,6 +36,10 @@ public class MyNetworkingClient extends BaseGame{
 	private String gpName, kbName;
 	private FindComponents findControls;
 	private SpaceStation station;
+	private Planet planet;
+	private Group planetGrp;
+	private Terrain terrain;
+	private TerrainBlock tBlock;
 	MyClient thisClient;
 	InetAddress remAddr;
 	long start;
@@ -130,12 +136,25 @@ public class MyNetworkingClient extends BaseGame{
 		//Now enabled the ZBuffer
 		skyBox.getBuf().setDepthTestingEnabled(true);
 		
+		//Setup Planet
+		planet = new Planet();
+		planetGrp = planet.loadObject();
+		
+		planetGrp.translate(0, 0, 0);
+		
+		addGameWorldObject(planetGrp);
+		
 		//Add other objects
 		ship = new SpaceShip(renderer,display);
 
 		//Add Space Station
 		station = new SpaceStation();
 		addGameWorldObject(station.loadObject());
+		
+		//Load terrain
+		terrain = new Terrain(this);
+		tBlock = terrain.getTerrain();
+		addGameWorldObject(tBlock);
 	}
 
 	 public void addGameWorldObject(SceneNode obj)
@@ -245,6 +264,9 @@ public class MyNetworkingClient extends BaseGame{
 		skyBox.setLocalTranslation(camTranslation);
 		//thisClient.sendByeMessage();
 		//If Laser class ammoEmpty boolean is not true, then move any missile within the Laser's missile vector
+		
+		//Spin Planet
+		planetGrp.rotate(.5f, new Vector3D(0,1,0));
 		
 		//Update everything in the world
 		super.update(elapsedTimeMS);
