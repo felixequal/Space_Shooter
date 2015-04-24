@@ -11,10 +11,14 @@ import sage.app.BaseGame;
 import sage.display.IDisplaySystem;
 import sage.input.IInputManager;
 import sage.networking.IGameConnection.ProtocolType;
+import sage.physics.IPhysicsEngine;
+import sage.physics.IPhysicsObject;
+import sage.physics.PhysicsEngineFactory;
 import sage.renderer.IRenderer;
 import sage.scene.Group;
 import sage.scene.SceneNode;
 import sage.scene.TriMesh;
+import sage.scene.shape.Cube;
 import sage.terrain.TerrainBlock;
 
 import javax.script.ScriptEngine;
@@ -27,7 +31,8 @@ import net.java.games.input.Component.Identifier.Key;
 import java.io.*;
 import java.util.*;
 
-public class MyNetworkingClient extends BaseGame{
+public class MyNetworkingClient extends BaseGame
+	{
 	private IDisplaySystem display;
 	private IRenderer renderer;
 	private IInputManager im;
@@ -37,9 +42,14 @@ public class MyNetworkingClient extends BaseGame{
 	private FindComponents findControls;
 	private SpaceStation station;
 	private Planet planet;
+	private Cube cube;
 	private Group planetGrp;
 	private Terrain terrain;
 	private TerrainBlock tBlock;
+	private double rangeMin = -50;
+	private double rangeMax = 50;
+	private ArrayList<PhysCube> physCubeList;
+	PhysCube physCube;
 	MyClient thisClient;
 	InetAddress remAddr;
 	long start;
@@ -52,17 +62,20 @@ public class MyNetworkingClient extends BaseGame{
 	private SceneNode rootNode;
 	private String serverAddress;
 	private int serverPort;
-	
+	private IPhysicsEngine physicsEngine;
+	private IPhysicsObject shipBall, cubeP;
+
 	public MyNetworkingClient(String serverAddr, int serverPrt)
-	{
+		{
 		super();
 		this.serverAddress = serverAddr;
 		this.serverPort = serverPrt;
-	}
-	
+		}
+
 	@Override
-	public void initGame(){
-		 try
+	public void initGame()
+		{
+		try
 			{
 				remAddr = InetAddress.getByName(serverAddress);
 			} catch (UnknownHostException e1)
@@ -71,132 +84,186 @@ public class MyNetworkingClient extends BaseGame{
 				e1.printStackTrace();
 			}
 		try
-			{ thisClient = new MyClient(InetAddress.getByName(serverAddress), serverPort, ProtocolType.TCP, this);
-			}catch (UnknownHostException e) { e.printStackTrace();}
-			catch (IOException e) { e.printStackTrace(); }
-			if(thisClient != null) 
-				{ 
-				thisClient.sendJoinMessage(); 
-				}
-		
-		
+			{
+				thisClient = new MyClient(InetAddress.getByName(serverAddress),
+						serverPort, ProtocolType.TCP, this);
+			} catch (UnknownHostException e)
+			{
+				e.printStackTrace();
+			} catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		if (thisClient != null)
+			{
+				thisClient.sendJoinMessage();
+			}
+
 		im = getInputManager();
-		
+
 		display = getDisplaySystem();
 		display.setTitle("Space Shooter");
-		
+
 		renderer = getDisplaySystem().getRenderer();
 		factory = new ScriptEngineManager();
-		
-		//Get a list of the script engines
+
+		// Get a list of the script engines
 		List<ScriptEngineFactory> list = factory.getEngineFactories();
 		jsEngine = factory.getEngineByName("js");
-				
+
 		System.out.println("Script Engine Factories Found: ");
-		for(ScriptEngineFactory f : list)
+		for (ScriptEngineFactory f : list)
 			{
-				System.out.println("Name =" + f.getEngineName() 
-									+ " language =" + f.getLanguageName() + " extensions =" + f.getExtensions());
+				System.out.println("Name =" + f.getEngineName() + " language ="
+						+ f.getLanguageName() + " extensions ="
+						+ f.getExtensions());
 			}
-		
-		//Add all game objects including skybox
-		
+
+		// Add all game objects including skybox
+
 		initGameObjects();
-//Run script
-		setupWorld();		
-		//Setup rest of the game objects and inpu
+		// Run script
+		setupWorld();
+		// Setup rest of the game objects and inpu
 		initInput();
-	//Run Signature Script
+		initPhysicsSystem();
+		createSagePhysicsWorld();
+		// Run Signature Script
 		signature();
 		start = System.currentTimeMillis();
-	}
-	
-	public void signature()
-	{
-		this.runScript(jsEngine, signatureScript);
-	}
-	
-	public void setupWorld()
-	{	
-		//Setup the axis with a javaScript
-		this.runScript(jsEngine, worldScript);	//run the javaScript engine
-						
-		//Get scenegraph created by the script and add to the game
-		rootNode = (SceneNode)jsEngine.get("rootNode");
-		addGameWorldObject(rootNode);
-	}
-	
-	
-	public void initGameObjects(){
-		start = System.currentTimeMillis();
-	//Add SkyBox w/ ZBuffer disabled
-		skyBox = new Space(renderer);
-		skyBox.scale(500.0f,500.0f,500.0f);
-		
-		addGameWorldObject(skyBox);
-		
-		//Now enabled the ZBuffer
-		skyBox.getBuf().setDepthTestingEnabled(true);
-		
-		//Setup Planet
-		planet = new Planet();
-		planetGrp = planet.loadObject();
-		
-		planetGrp.translate(0, 0, 0);
-		
-		addGameWorldObject(planetGrp);
-		
-		//Add other objects
-		ship = new SpaceShip(renderer,display);
+		}
 
-		//Add Space Station
+	public void signature()
+		{
+		this.runScript(jsEngine, signatureScript);
+		}
+
+	public void setupWorld()
+		{
+		// Setup the axis with a javaScript
+		this.runScript(jsEngine, worldScript); // run the javaScript engine
+
+		// Get scenegraph created by the script and add to the game
+		rootNode = (SceneNode) jsEngine.get("rootNode");
+		addGameWorldObject(rootNode);
+		}
+
+	protected void initPhysicsSystem()
+	{
+		String engine = "sage.physics.JBullet.JBulletPhysicsEngine";
+		physicsEngine = PhysicsEngineFactory.createPhysicsEngine(engine);
+		physicsEngine.initSystem();
+		float[] gravity = {0,0,0};
+		physicsEngine.setGravity(gravity);
+	}
+	
+	private void createSagePhysicsWorld()
+	{
+		float massCube =  1000.0f;
+		for (PhysCube pcube: physCubeList){
+		cubeP = physicsEngine.addBoxObject(physicsEngine.nextUID(),massCube,pcube.getCube().getWorldTransform().getValues(), pcube.getSize());
+		cubeP.setBounciness(1.0f);
+		pcube.getCube().setPhysicsObject(cubeP);
+		
+		float massShip = 5.0f;
+		shipBall =  physicsEngine.addSphereObject(physicsEngine.nextUID(),massShip,ship.getWorldTransform().getValues(), 1.0f);
+		shipBall.setBounciness(1.0f);
+		ship.setPhysicsObject(shipBall); 
+		}
+	}
+	public void initGameObjects()
+		{
+		physCubeList = new ArrayList<PhysCube>();
+		start = System.currentTimeMillis();
+		// Add SkyBox w/ ZBuffer disabled
+		skyBox = new Space(renderer);
+		skyBox.scale(500.0f, 500.0f, 500.0f);
+		addGameWorldObject(skyBox);
+		// Now enabled the ZBuffer
+		skyBox.getBuf().setDepthTestingEnabled(true);
+		for (int p = 0; p < 15; p++)
+			{
+				Random r = new Random();
+				double a = rangeMin + (rangeMax - rangeMin) * r.nextDouble();
+				double b = rangeMin + (rangeMax - rangeMin) * r.nextDouble();
+				double c = rangeMin + (rangeMax - rangeMin) * r.nextDouble();
+				float x = (float) (a / 3) * 1.5f;
+				float y = (float) (b / 4) * 1.5f;
+				float z = (float) (c / 3) * 1.5f;
+				Matrix3D localTranslation = new Matrix3D();
+				localTranslation.translate(a, b, c);
+				cube = new Cube();
+				cube.scale(x ,y ,z);
+				cube.setLocalTranslation(localTranslation);
+				cube.updateWorldBound();
+				physCube = new PhysCube(x,y,z,cube);
+				physCubeList.add(physCube);
+				addGameWorldObject(cube);
+			}
+		 planet = new Planet();
+		 planetGrp = planet.loadObject();
+		 planetGrp.translate(0, 0, 0);
+		 addGameWorldObject(planetGrp);
+		// Add other objects
+		ship = new SpaceShip(renderer, display);
+
+		// Add Space Station
 		station = new SpaceStation();
 		addGameWorldObject(station.loadObject());
-		
-		//Load terrain
-		terrain = new Terrain(this);
-		tBlock = terrain.getTerrain();
-		addGameWorldObject(tBlock);
-	}
 
-	 public void addGameWorldObject(SceneNode obj)
-	{
-		super.addGameWorldObject(obj);
-	}
-	
-	 public boolean removeGameWorldObject(SceneNode obj)
-	 {
-		 boolean b = super.removeGameWorldObject(obj);
-		 return b;
-	 }
-	
-	private void runScript(ScriptEngine engine, String scriptFileName)
-	{
-		try
-		{
-			FileReader fileReader = new FileReader(scriptFileName);
-			engine.eval(fileReader);
-			fileReader.close();
+		// Load terrain
+		// terrain = new Terrain(this);
+		//tBlock = terrain.getTerrain();
+		// addGameWorldObject(tBlock);
 		}
-		catch(FileNotFoundException e1)
-		{System.out.println(scriptFileName + "not found" + e1);}
-		catch(IOException e2)
-		{System.out.println("IO Problem With " + scriptFileName + e2);}
-		catch(ScriptException e3)
-		{System.out.println("ScriptException in " + scriptFileName + e3);}
-		catch(NullPointerException e4)
-		{System.out.println("Null ptr exception in " + scriptFileName + e4);}
-	}
 
-	
-	public void initInput(){
-		
-		findControls = new FindComponents();	//Look for all controls connected to computer that can be used for game
-		//findControls.listControllers();			//List out available controllers
-		
-		//Add Action Classes
-		MoveForwardAction forward = new MoveForwardAction(thisClient, ship.getCamera(), ship);
-		MoveBackwardAction backward = new MoveBackwardAction(ship.getCamera(), ship);
+	public void addGameWorldObject(SceneNode obj)
+		{
+		super.addGameWorldObject(obj);
+		}
+
+	public boolean removeGameWorldObject(SceneNode obj)
+		{
+		boolean b = super.removeGameWorldObject(obj);
+		return b;
+		}
+
+	private void runScript(ScriptEngine engine, String scriptFileName)
+		{
+		try
+			{
+				FileReader fileReader = new FileReader(scriptFileName);
+				engine.eval(fileReader);
+				fileReader.close();
+			} catch (FileNotFoundException e1)
+			{
+				System.out.println(scriptFileName + "not found" + e1);
+			} catch (IOException e2)
+			{
+				System.out.println("IO Problem With " + scriptFileName + e2);
+			} catch (ScriptException e3)
+			{
+				System.out.println("ScriptException in " + scriptFileName + e3);
+			} catch (NullPointerException e4)
+			{
+				System.out.println("Null ptr exception in " + scriptFileName
+						+ e4);
+			}
+		}
+
+	public void initInput()
+		{
+
+		findControls = new FindComponents(); // Look for all controls connected
+												// to computer that can be used
+												// for game
+		// findControls.listControllers(); //List out available controllers
+
+		// Add Action Classes
+		MoveForwardAction forward = new MoveForwardAction(thisClient,
+				ship.getCamera(), ship);
+		MoveBackwardAction backward = new MoveBackwardAction(ship.getCamera(),
+				ship);
 		PitchAction pitch = new PitchAction(ship.getCamera(), ship);
 		PitchUpAction pitchUp = new PitchUpAction(ship.getCamera(), ship);
 		PitchDownAction pitchDown = new PitchDownAction(ship.getCamera(), ship);
@@ -204,103 +271,127 @@ public class MyNetworkingClient extends BaseGame{
 		YawLeftAction yawLeft = new YawLeftAction(ship.getCamera(), ship);
 		TiltRightAction tiltRight = new TiltRightAction(ship.getCamera(), ship);
 		TiltLeftAction tiltLeft = new TiltLeftAction(ship.getCamera(), ship);
-///////////////////////////////////////////////////////////////////////////////////////////////////////		
+		// /////////////////////////////////////////////////////////////////////////////////////////////////////
 		kbName = im.getKeyboardName();
-		im.associateAction(kbName, Key.W, forward,IInputManager.INPUT_ACTION_TYPE.ON_PRESS_AND_RELEASE);
-		//im.associateAction(kbName, Key.Q, removeStation ,IInputManager.INPUT_ACTION_TYPE.ON_PRESS_AND_RELEASE)
-		im.associateAction(kbName, Key.S, backward,IInputManager.INPUT_ACTION_TYPE.ON_PRESS_AND_RELEASE);
-		im.associateAction(kbName, Key.DOWN, pitchUp,IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-		im.associateAction(kbName, Key.UP, pitchDown,IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-		im.associateAction(kbName, Key.RIGHT, yawRight,IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-		im.associateAction(kbName, Key.LEFT, yawLeft,IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-		im.associateAction(kbName, Key.D, tiltRight,IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-		im.associateAction(kbName, Key.A, tiltLeft,IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-		
-		//Check to see if gamepad is connected
-		if(!(im.getFirstGamepadName() == null)){
-			gpName = im.getFirstGamepadName();
-			
-			//Assign controls
-			im.associateAction(gpName, net.java.games.input.Component.Identifier.Button._2, forward,
-					IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-			im.associateAction(gpName, net.java.games.input.Component.Identifier.Button._3, backward,
-					IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-			im.associateAction(gpName, net.java.games.input.Component.Identifier.Axis.Y, pitch,
-					IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-		}
-	}
-	
-	@Override
-	public void update(float elapsedTimeMS){
-		end = System.currentTimeMillis();
-		if (((end - start)/100.0) > .01)
-			{	
-			start = System.currentTimeMillis();
-		//Update ship's movement according to speed
-		ship.move();
-		if(thisClient != null) 
+		im.associateAction(kbName, Key.W, forward,
+				IInputManager.INPUT_ACTION_TYPE.ON_PRESS_AND_RELEASE);
+		// im.associateAction(kbName, Key.Q, removeStation
+		// ,IInputManager.INPUT_ACTION_TYPE.ON_PRESS_AND_RELEASE)
+		im.associateAction(kbName, Key.S, backward,
+				IInputManager.INPUT_ACTION_TYPE.ON_PRESS_AND_RELEASE);
+		im.associateAction(kbName, Key.DOWN, pitchUp,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+		im.associateAction(kbName, Key.UP, pitchDown,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+		im.associateAction(kbName, Key.RIGHT, yawRight,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+		im.associateAction(kbName, Key.LEFT, yawLeft,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+		im.associateAction(kbName, Key.D, tiltRight,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+		im.associateAction(kbName, Key.A, tiltLeft,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+
+		// Check to see if gamepad is connected
+		if (!(im.getFirstGamepadName() == null))
 			{
-			thisClient.processPackets();
-			thisClient.sendMoveMessage(ship.getLocationVec());
-			}
-		station.rotateStation();
-		//Update SkyBox according to ship's position
-		Point3D camLoc = ship.getCamera().getLocation();
-		Matrix3D camTranslation = new Matrix3D();
-		camTranslation.translate(camLoc.getX(),  camLoc.getY(), camLoc.getZ());
-		skyBox.setLocalTranslation(camTranslation);
-		//thisClient.sendByeMessage();
-		//If Laser class ammoEmpty boolean is not true, then move any missile within the Laser's missile vector
-<<<<<<< HEAD
-=======
-		
-		//Spin Planet
-		planetGrp.rotate(.5f, new Vector3D(0,1,0));
-		
->>>>>>> origin/master
-		//Update everything in the world
-		super.update(elapsedTimeMS);
-			}
-		
-		//System.out.println("start:" + start);
-		//System.out.println("end-start" + ((end-start)));
-	}
+				gpName = im.getFirstGamepadName();
 
-	public void setIsConnected(boolean b) {
+				// Assign controls
+				im.associateAction(gpName,
+						net.java.games.input.Component.Identifier.Button._2,
+						forward,
+						IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+				im.associateAction(gpName,
+						net.java.games.input.Component.Identifier.Button._3,
+						backward,
+						IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+				im.associateAction(gpName,
+						net.java.games.input.Component.Identifier.Axis.Y,
+						pitch,
+						IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+			}
+		}
+
+	@Override
+	public void update(float elapsedTimeMS)
+		{
+		end = System.currentTimeMillis();
+		if (((end - start) / 100.0) > .016)
+			{
+				start = System.currentTimeMillis();
+				// Update ship's movement according to speed
+				ship.move();
+				if (thisClient != null)
+					{
+						thisClient.processPackets();
+						thisClient.sendMoveMessage(ship.getLocationVec());
+					}
+				station.rotateStation();
+				// Update SkyBox according to ship's position
+				Point3D camLoc = ship.getCamera().getLocation();
+				Matrix3D camTranslation = new Matrix3D();
+				camTranslation.translate(camLoc.getX(), camLoc.getY(),
+						camLoc.getZ());
+				skyBox.setLocalTranslation(camTranslation);
+				Matrix3D mat;
+				Vector3D translateVec;
+				physicsEngine.update(20.0f);
+				/*for (SceneNode s : getGameWorld())
+					{
+					if (s.getPhysicsObject()
+					}
+					*/
+				// thisClient.sendByeMessage();
+				// If Laser class ammoEmpty boolean is not true, then move any
+				// missile within the Laser's missile vector
+				// Spin Planet
+				 planetGrp.rotate(.5f, new Vector3D(0, 1, 0));
+				// Update everything in the world
+				super.update(elapsedTimeMS);
+			}
+
+		// System.out.println("start:" + start);
+		// System.out.println("end-start" + ((end-start)));
+		}
+
+	public void setIsConnected(boolean b)
+		{
 		// TODO Auto-generated method stub
-		
-	}
 
-	public Vector3D getPlayerPosition() {
+		}
+
+	public Vector3D getPlayerPosition()
+		{
 		Vector3D playerPositionVector = new Vector3D(ship.getLocation());
 		// TODO Auto-generated method stub
 		return playerPositionVector;
-	}
-	
+		}
+
 	@Override
 	public void shutdown()
-	{	
+		{
 		super.shutdown();
-		if(thisClient != null)
+		if (thisClient != null)
 			{
-		 thisClient.sendByeMessage();
-			
-		 try
-			{
-				thisClient.shutdown();
-			} catch (IOException e1)
-			{
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				thisClient.sendByeMessage();
+
+				try
+					{
+						thisClient.shutdown();
+					} catch (IOException e1)
+					{
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				try
+					{
+						Thread.sleep(4000);
+					} catch (InterruptedException e)
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 			}
-		 try
-			{
-				Thread.sleep(4000);
-			} catch (InterruptedException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			}
+		}
 	}
-}
