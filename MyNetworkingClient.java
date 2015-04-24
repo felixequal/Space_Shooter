@@ -37,6 +37,7 @@ public class MyNetworkingClient extends BaseGame{
 	MyClient thisClient;
 	InetAddress remAddr;
 	long start;
+	long end;
 
 	private ScriptEngineManager factory;
 	private String worldScript = "scripts/SetupWorld.js";
@@ -101,6 +102,7 @@ public class MyNetworkingClient extends BaseGame{
 		initInput();
 	//Run Signature Script
 		signature();
+		start = System.currentTimeMillis();
 	}
 	
 	public void signature()
@@ -120,7 +122,7 @@ public class MyNetworkingClient extends BaseGame{
 	
 	
 	public void initGameObjects(){
-		start = System.nanoTime();
+		start = System.currentTimeMillis();
 	//Add SkyBox w/ ZBuffer disabled
 		skyBox = new Space(renderer);
 		skyBox.scale(500.0f,500.0f,500.0f);
@@ -211,31 +213,16 @@ public class MyNetworkingClient extends BaseGame{
 	
 	@Override
 	public void update(float elapsedTimeMS){
-		/*long end = System.nanoTime();
-		System.out.println("countdown:" + ((end-start)/1000000000));
-		if (((end - start)/1000000000) > 15)
-			{
-				System.out.println("Removing Station!");
-				removeGameWorldObject(station.loadObject());
-				
-			}
-		*/
+		end = System.currentTimeMillis();
+		if (((end - start)/100.0) > .01)
+			{	
+			start = System.currentTimeMillis();
 		//Update ship's movement according to speed
 		ship.move();
 		if(thisClient != null) 
 			{
-		/*	if (thisClient.checkAvatarsToDelete() == true)
-				{
-					
-					//GhostAvatar g = thisClient.getGhostToRemove();
-					System.out.println("Deleting ghost avatar object from gameworld in MNC");
-				boolean b = removeGameWorldObject(thisClient.getGhostToRemove());
-				System.out.println("Removed ghost?: " + b);
-				}
-		*/
 			thisClient.processPackets();
 			thisClient.sendMoveMessage(ship.getLocationVec());
-			
 			}
 		station.rotateStation();
 		//Update SkyBox according to ship's position
@@ -245,9 +232,12 @@ public class MyNetworkingClient extends BaseGame{
 		skyBox.setLocalTranslation(camTranslation);
 		//thisClient.sendByeMessage();
 		//If Laser class ammoEmpty boolean is not true, then move any missile within the Laser's missile vector
-		
 		//Update everything in the world
 		super.update(elapsedTimeMS);
+			}
+		
+		//System.out.println("start:" + start);
+		//System.out.println("end-start" + ((end-start)));
 	}
 
 	public void setIsConnected(boolean b) {
