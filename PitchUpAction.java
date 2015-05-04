@@ -10,10 +10,12 @@ public class PitchUpAction extends AbstractInputAction
 {
 	private ICamera camera;
 	private SpaceShip ship;
+	private MyClient client;
 	
-	public PitchUpAction(ICamera c, SpaceShip ship)
+	public PitchUpAction(MyClient thisClient, ICamera c, SpaceShip ship)
 	{
 		this.camera = c;
+		this.client = thisClient;
 		this.ship = ship;
 	}
 
@@ -34,5 +36,12 @@ public class PitchUpAction extends AbstractInputAction
 		camera.setUpAxis(upDir.normalize());
 		camera.setViewDirection(viewDir.normalize());
 		ship.setCamera(camera);
+		if (client != null)
+			{
+				client.processPackets();
+				client.sendRotMessage(viewDir);
+			}
+		
+		
 	}
 }
