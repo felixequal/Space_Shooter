@@ -1,7 +1,9 @@
 package space_shooter;
 
 import java.awt.Color;
+
 import sage.scene.shape.Sphere;
+import graphicslib3D.Matrix3D;
 import graphicslib3D.Point3D;
 import graphicslib3D.Vector3D;
 
@@ -15,8 +17,7 @@ public class Laser extends MoveableObject{
 		laser = new Sphere();
 		this.ship = ship;
 		this.speed = speed;
-		
-		//this.setLocalTranslation(ship.getLocalTranslation());
+		laser.scale(0.1f, 0.1f, 0.1f);
 		laser.setColor(Color.RED);
 	}
 	
