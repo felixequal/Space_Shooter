@@ -56,6 +56,7 @@ public class SpaceShip extends MoveableObject{
 	public void fireLaser(){
 		laser = new Laser(this, 6);	//Laser needs a ship and speed in order to fire
 		laserObj = laser.getLaser();
+		//laserObj.setWorldTranslation(this.getWorldTranslation());
 		laserStorage.add(laser);	//Add laser to vector array
 		
 		if(laserStorage == null){
@@ -67,6 +68,9 @@ public class SpaceShip extends MoveableObject{
 	
 	public Sphere getLaserOBj(){
 		return laserObj;
+	}
+	public Vector<Laser> getLaserStorage(){
+		return laserStorage;
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	

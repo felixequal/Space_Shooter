@@ -16,7 +16,7 @@ public class Laser extends MoveableObject{
 		this.ship = ship;
 		this.speed = speed;
 		
-		this.setLocation(ship.getLocation());
+		//this.setLocalTranslation(ship.getLocalTranslation());
 		laser.setColor(Color.RED);
 	}
 	

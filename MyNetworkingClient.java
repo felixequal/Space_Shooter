@@ -64,6 +64,7 @@ public class MyNetworkingClient extends BaseGame
 	private int serverPort;
 	private IPhysicsEngine physicsEngine;
 	private IPhysicsObject shipBall, cubeP;
+	private Matrix3D camTranslation;
 
 	public MyNetworkingClient(String serverAddr, int serverPrt)
 		{
@@ -316,6 +317,10 @@ public class MyNetworkingClient extends BaseGame
 			}
 		}
 
+	public Matrix3D getCamLocation(){
+		return camTranslation;
+	}
+	
 	@Override
 	public void update(float elapsedTimeMS)
 		{
@@ -333,7 +338,7 @@ public class MyNetworkingClient extends BaseGame
 				station.rotateStation();
 				// Update SkyBox according to ship's position
 				Point3D camLoc = ship.getCamera().getLocation();
-				Matrix3D camTranslation = new Matrix3D();
+				camTranslation = new Matrix3D();
 				camTranslation.translate(camLoc.getX(), camLoc.getY(),
 						camLoc.getZ());
 				skyBox.setLocalTranslation(camTranslation);
