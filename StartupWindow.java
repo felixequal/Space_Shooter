@@ -27,6 +27,7 @@ public class StartupWindow{
 	private JTextField txtIpAddress;
 	private JButton btnPlayGame = new JButton("Play Game");
 	GameServerTCP server;
+	private int portID = 10001;
 
 	/**
 	 * Launch the application.
@@ -110,7 +111,7 @@ public class StartupWindow{
 					e1.printStackTrace();
 				}
 				try {
-					server = new GameServerTCP(10001);
+					server = new GameServerTCP(portID);
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -131,7 +132,6 @@ public class StartupWindow{
 			{
 				System.out.println("Hello World");
 				String address = txtIpAddress.getText();
-				int portID = 10001;
 				MyNetworkingClient game = new MyNetworkingClient(address, portID);
 				game.start();
 			}
