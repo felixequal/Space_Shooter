@@ -252,10 +252,8 @@ public class MyNetworkingClient extends BaseGame
 		}
 
 	public void initInput()
-		{
-
-		findControls = new FindComponents(); // Look for all controls connected
-												// to computer that can be used
+	{
+		findControls = new FindComponents(); // Look for all controls connected											// to computer that can be used
 												// for game
 		// findControls.listControllers(); //List out available controllers
 
@@ -271,6 +269,8 @@ public class MyNetworkingClient extends BaseGame
 		YawLeftAction yawLeft = new YawLeftAction(ship.getCamera(), ship);
 		TiltRightAction tiltRight = new TiltRightAction(ship.getCamera(), ship);
 		TiltLeftAction tiltLeft = new TiltLeftAction(ship.getCamera(), ship);
+		
+		FireLaserAction fireLaser = new FireLaserAction(this, ship);
 		// /////////////////////////////////////////////////////////////////////////////////////////////////////
 		kbName = im.getKeyboardName();
 		im.associateAction(kbName, Key.W, forward,
@@ -291,9 +291,12 @@ public class MyNetworkingClient extends BaseGame
 				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
 		im.associateAction(kbName, Key.A, tiltLeft,
 				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+		
+		im.associateAction(kbName, Key.SPACE, fireLaser,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
 
 		// Check to see if gamepad is connected
-		if (!(im.getFirstGamepadName() == null))
+			if (!(im.getFirstGamepadName() == null))
 			{
 				gpName = im.getFirstGamepadName();
 
