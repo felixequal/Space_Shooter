@@ -1,5 +1,8 @@
 package space_shooter;
-
+/*
+ * This class handles all client network functions.  It is instantiated in the main game class (MyNetworkingClient).
+ * It instantiates and updates ghost avatar positions/rotations etc. It sends/recieves messages from the server.
+ */
 import graphicslib3D.Vector3D;
 
 import java.io.IOException;
@@ -27,6 +30,7 @@ public class MyClient extends GameConnectionClient
 	
 	public MyClient(InetAddress remAddr, int remPort, ProtocolType pType, MyNetworkingClient game) throws IOException
 	{
+		
 		super(remAddr, remPort, pType);
 		this.game = game;
 		this.id = UUID.randomUUID();

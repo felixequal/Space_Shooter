@@ -1,5 +1,8 @@
 package space_shooter;
-
+/* This is the main game client. It inits a physics handler and a network hander (CLASS:MyClient) which is attached and runs the network part.
+ * If there is no server, it ignores network functionality and just runs standalone.
+ * 
+ */
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
