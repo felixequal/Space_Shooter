@@ -73,7 +73,7 @@ public class MyNetworkingClient extends BaseGame
 		super();
 		this.serverAddress = serverAddr;
 		this.serverPort = serverPrt;
-		}
+		System.out.println("Server Addr: " + serverAddress);		}
 
 	@Override
 	public void initGame()
