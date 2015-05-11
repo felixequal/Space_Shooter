@@ -104,9 +104,7 @@ public class SpaceShip extends MoveableObject{
 		viewDir = camera.getViewDirection().normalize();
 		Vector3D curLocVector = new Vector3D(this.getLocation());
 		Vector3D newLocVector = new Vector3D();
-		
-		newLocVector = curLocVector.add(viewDir.mult(0.005 * speed));
-		 
+		newLocVector = curLocVector.add(viewDir.mult(0.005 * speed));	 
 		double newX = newLocVector.getX();
 		double newY = newLocVector.getY();
 		double newZ = newLocVector.getZ();

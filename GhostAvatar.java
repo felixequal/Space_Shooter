@@ -13,41 +13,44 @@ import sage.texture.Texture;
 import sage.texture.TextureManager;
 import sage.texture.Texture.ApplyMode;
 
-public class GhostAvatar extends TriMesh {
+public class GhostAvatar extends TriMesh
+	{
 
 	private Pyramid testPyramid;
 	private Matrix3D positionMat;
 	private Vector3D positionVec;
 	private Vector3D rotationVec;
 	private UUID ghostID;
-	
+
 	private TriMesh shipObj = new TriMesh();
 	private OBJLoader loader = new OBJLoader();
 	private Texture shipT;
-	
+
 	public GhostAvatar(UUID id, Vector3D initPosition)
-	{
-		
+		{
+
 		ghostID = id;
 		System.out.println("ghost avatar created: ID: " + ghostID);
 		positionVec = initPosition;
-		testPyramid = new Pyramid();
-		
+		// testPyramid = new Pyramid();
+
 		shipObj = loader.loadModel("models/Spaceship.obj");
-		shipObj.scale(0.1f,0.1f,0.1f);
+		shipObj.scale(0.1f, 0.1f, 0.1f);
 		shipT = TextureManager.loadTexture2D("textures/playerUV.jpg");
 		shipT.setApplyMode(ApplyMode.Replace);
 		shipObj.setTexture(shipT);
-		//Sphere testSphere = new Sphere();
-		//testSphere.
-		//Matrix3D positionMat = testPyramid.getLocalTranslation();
-		//testPyramid.translate((float)positionVec.getX(), (float)positionVec.getY(), (float)positionVec.getZ());
-		//testPyramid.setColor(Color.BLUE);
-		//testPyramid.setLocalTranslation(positionMat);
-		//testPyramid.translate(initPosition.getX(), initPosition.getY(), initPosition.getZ());
+		// Sphere testSphere = new Sphere();
+		// testSphere.
+		// Matrix3D positionMat = testPyramid.getLocalTranslation();
+		// testPyramid.translate((float)positionVec.getX(),
+		// (float)positionVec.getY(), (float)positionVec.getZ());
+		// testPyramid.setColor(Color.BLUE);
+		// testPyramid.setLocalTranslation(positionMat);
+		// testPyramid.translate(initPosition.getX(), initPosition.getY(),
+		// initPosition.getZ());
 		getAvatar();
-	}
-	
+		}
+
 	public Vector3D getPositionVec()
 		{
 		return positionVec;
@@ -70,27 +73,26 @@ public class GhostAvatar extends TriMesh {
 		}
 
 	public TriMesh getAvatar()
-	{
+		{
 		return shipObj;
-	}
-	
+		}
+
 	public void moveAvatar(Vector3D newPos)
-	{
-		
+		{
 		positionVec = newPos;
 		Matrix3D mat = new Matrix3D();
-		mat.translate(newPos.getX(),  newPos.getY(), newPos.getZ());
+		mat.translate(newPos.getX(), newPos.getY(), newPos.getZ());
 		shipObj.setLocalTranslation(mat);
-	}
-	
+		}
+
 	public void rotAvatar(Vector3D newRot)
 		{
-			System.out.println("in Ghost Avatar: Rotating avatar");
-			System.out.println("rot vector: " + newRot.toString());
-			rotationVec = newRot;
-			Matrix3D mat = new Matrix3D();
-			mat.rotate(rotationVec.getX(), rotationVec.getY(), rotationVec.getZ());
-			shipObj.setLocalRotation(mat);
+		System.out.println("in Ghost Avatar: Rotating avatar");
+		System.out.println("rot vector: " + newRot.toString());
+		rotationVec = newRot;
+		Matrix3D mat = new Matrix3D();
+		mat.rotate(rotationVec.getX(), rotationVec.getY(), rotationVec.getZ());
+		shipObj.setLocalRotation(mat);
 		}
-	
-}
+
+	}

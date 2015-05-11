@@ -165,8 +165,7 @@ int numberOfClients = 0;
 				e.printStackTrace(); 
 				}
 			}
-		catch (IOException e) { e.printStackTrace();}  
-		
+		catch (IOException e) { e.printStackTrace();}	
 		}
 
 	public void sendJoinedMessage(UUID clientID, boolean success) throws SocketException
