@@ -44,6 +44,7 @@ public class MyNetworkingClient extends BaseGame
 	private String gpName, kbName;
 	private FindComponents findControls;
 	private SpaceStation station;
+	private Map map;
 	private Planet planet;
 	private Cube cube;
 	private Group planetGrp;
@@ -184,7 +185,7 @@ public class MyNetworkingClient extends BaseGame
 		addGameWorldObject(skyBox);
 		// Now enabled the ZBuffer
 		skyBox.getBuf().setDepthTestingEnabled(true);
-		for (int p = 0; p < 15; p++)
+		/*for (int p = 0; p < 15; p++)
 			{
 				Random r = new Random();
 				double a = rangeMin + (rangeMax - rangeMin) * r.nextDouble();
@@ -202,7 +203,7 @@ public class MyNetworkingClient extends BaseGame
 				physCube = new PhysCube(x,y,z,cube);
 				physCubeList.add(physCube);
 				addGameWorldObject(cube);
-			}
+			}*/
 		 planet = new Planet();
 		 planetGrp = planet.loadObject();
 		 planetGrp.translate(0, 0, 0);
@@ -214,6 +215,13 @@ public class MyNetworkingClient extends BaseGame
 		station = new SpaceStation();
 		addGameWorldObject(station.loadObject());
 
+		map = new Map();
+		addGameWorldObject(map.loadWall1());
+		addGameWorldObject(map.loadWall2());
+		addGameWorldObject(map.loadWall3());
+		addGameWorldObject(map.loadWall4());
+		addGameWorldObject(map.loadCargoShip());
+		
 		// Load terrain
 		// terrain = new Terrain(this);
 		//tBlock = terrain.getTerrain();
