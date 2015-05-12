@@ -2,27 +2,27 @@ package space_shooter;
 
 import java.awt.Color;
 
-import sage.scene.shape.Rectangle;
+import sage.scene.shape.Sphere;
+import graphicslib3D.Matrix3D;
 import graphicslib3D.Point3D;
 import graphicslib3D.Vector3D;
 
 public class Laser extends MoveableObject{
-	private Rectangle laser;
+	private Sphere laser;
 	private float speed;
 	private Point3D location;
 	private SpaceShip ship;
 	
 	public Laser(SpaceShip ship, float speed){
+		laser = new Sphere();
 		this.ship = ship;
 		this.speed = speed;
-		
-		this.setLocation(ship.getLocation());
+		laser.scale(0.1f, 0.1f, 0.1f);
 		laser.setColor(Color.RED);
-		move();
 	}
 	
 	public void move(){
-		Vector3D viewDir = ship.getCamera().getViewDirection().normalize();
+	/*	Vector3D viewDir = ship.getCamera().getViewDirection().normalize();
 		Vector3D curLocVector = new Vector3D(this.getLocation());
 		Vector3D newLocVector = new Vector3D();
 		
@@ -33,6 +33,11 @@ public class Laser extends MoveableObject{
 		double newZ = newLocVector.getZ();
 		Point3D newLoc = new Point3D(newX,newY,newZ);
 		this.setLocation(newLoc);
+	*/
+	}
+	
+	public Sphere getLaser(){
+		return laser;
 	}
 	
 	@Override

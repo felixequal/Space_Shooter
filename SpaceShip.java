@@ -10,6 +10,8 @@ import sage.camera.ICamera;
 import sage.display.IDisplaySystem;
 import sage.renderer.IRenderer;
 import sage.scene.HUDImage;
+import sage.scene.TriMesh;
+import sage.scene.shape.Sphere;
 
 public class SpaceShip extends MoveableObject{
 
@@ -21,6 +23,7 @@ public class SpaceShip extends MoveableObject{
 	private HUDImage cockpit;
 	private float speed;
 	private Laser laser;
+	private Sphere laserObj;
 	private Vector<Laser> laserStorage = new Vector<>();
 	private boolean ammoEmpty;
 	private Vector3D locVec;
@@ -53,6 +56,8 @@ public class SpaceShip extends MoveableObject{
 	//Check to see if ship has any ammo left. If so, keep moving all lasers in Vector<> and check for collisions
 	public void fireLaser(){
 		laser = new Laser(this, 6);	//Laser needs a ship and speed in order to fire
+		laserObj = laser.getLaser();
+		//laserObj.setWorldTranslation(this.getWorldTranslation());
 		laserStorage.add(laser);	//Add laser to vector array
 		
 		if(laserStorage == null){
@@ -60,6 +65,13 @@ public class SpaceShip extends MoveableObject{
 		}else{
 			ammoEmpty = false;
 		}
+	}
+	
+	public Sphere getLaserOBj(){
+		return laserObj;
+	}
+	public Vector<Laser> getLaserStorage(){
+		return laserStorage;
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
