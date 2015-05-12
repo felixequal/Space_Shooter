@@ -46,7 +46,7 @@ public class SpaceShip extends MoveableObject{
 		cockpit.setLocation(0,-0.6);
 		cockpit.setRenderMode(sage.scene.SceneNode.RENDER_MODE.ORTHO);
 		cockpit.setCullMode(sage.scene.SceneNode.CULL_MODE.NEVER);
-		this.addToHUD(cockpit);
+		//this.addToHUD(cockpit);
 	}
 	
 	////////////////////////////////FIRE WEAPONS/////////////////////////////////////////////////////////////////////

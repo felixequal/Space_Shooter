@@ -31,23 +31,13 @@ public class GhostAvatar extends TriMesh
 
 		ghostID = id;
 		System.out.println("ghost avatar created: ID: " + ghostID);
-		positionVec = initPosition;
-		// testPyramid = new Pyramid();
-
+		//positionVec = initPosition;
+		moveAvatar(initPosition);
 		shipObj = loader.loadModel("models/Spaceship.obj");
 		shipObj.scale(0.1f, 0.1f, 0.1f);
 		shipT = TextureManager.loadTexture2D("textures/playerUV.jpg");
 		shipT.setApplyMode(ApplyMode.Replace);
 		shipObj.setTexture(shipT);
-		// Sphere testSphere = new Sphere();
-		// testSphere.
-		// Matrix3D positionMat = testPyramid.getLocalTranslation();
-		// testPyramid.translate((float)positionVec.getX(),
-		// (float)positionVec.getY(), (float)positionVec.getZ());
-		// testPyramid.setColor(Color.BLUE);
-		// testPyramid.setLocalTranslation(positionMat);
-		// testPyramid.translate(initPosition.getX(), initPosition.getY(),
-		// initPosition.getZ());
 		getAvatar();
 		}
 
@@ -89,10 +79,11 @@ public class GhostAvatar extends TriMesh
 		{
 		System.out.println("in Ghost Avatar: Rotating avatar");
 		System.out.println("rot vector: " + newRot.toString());
-		rotationVec = newRot;
-		Matrix3D mat = new Matrix3D();
-		mat.rotate(rotationVec.getX(), rotationVec.getY(), rotationVec.getZ());
+		Matrix3D mat = shipObj.getLocalRotation();
+		newRot.mult(mat);
+		mat.rotate(newRot.getX(), newRot.getY(), newRot.getZ());
 		shipObj.setLocalRotation(mat);
+		//shipObj.setLocalRotation(mat);
 		}
 
 	}
