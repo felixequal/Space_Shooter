@@ -24,6 +24,7 @@ public class SpaceShip extends MoveableObject{
 	private Vector<Laser> laserStorage = new Vector<>();
 	private boolean ammoEmpty;
 	private Vector3D locVec;
+	private Vector3D viewDir;
 	
 	//Build constructor
 	public SpaceShip(IRenderer renderer, IDisplaySystem display){
@@ -45,7 +46,7 @@ public class SpaceShip extends MoveableObject{
 		cockpit.setLocation(0,-0.6);
 		cockpit.setRenderMode(sage.scene.SceneNode.RENDER_MODE.ORTHO);
 		cockpit.setCullMode(sage.scene.SceneNode.CULL_MODE.NEVER);
-		this.addToHUD(cockpit);
+		//this.addToHUD(cockpit);
 	}
 	
 	////////////////////////////////FIRE WEAPONS/////////////////////////////////////////////////////////////////////
@@ -73,6 +74,12 @@ public class SpaceShip extends MoveableObject{
 
 	public Point3D getLocation() {return location;}
 	
+	public Vector3D getRotationVec()
+	{
+	viewDir = camera.getViewDirection().normalize();
+	return viewDir;
+	}
+	
 	public Vector3D getLocationVec()
 		{
 		Vector3D newLoc = new Vector3D(location.getX(), location.getY(), location.getZ());
@@ -94,12 +101,10 @@ public class SpaceShip extends MoveableObject{
 	}
 	
 	public void move(){
-		Vector3D viewDir = camera.getViewDirection().normalize();
+		viewDir = camera.getViewDirection().normalize();
 		Vector3D curLocVector = new Vector3D(this.getLocation());
 		Vector3D newLocVector = new Vector3D();
-		
-		newLocVector = curLocVector.add(viewDir.mult(0.005 * speed));
-		 
+		newLocVector = curLocVector.add(viewDir.mult(0.005 * speed));	 
 		double newX = newLocVector.getX();
 		double newY = newLocVector.getY();
 		double newZ = newLocVector.getZ();

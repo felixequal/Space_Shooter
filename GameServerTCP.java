@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.UUID;
+
 import sage.networking.server.GameConnectionServer;
 import sage.networking.server.IClientInfo;
 
@@ -86,8 +87,7 @@ int numberOfClients = 0;
 		
 		if(msgTokens[0].compareTo("dsfr") == 0) // receive “details for”
 		{
-		System.out.println("Server: received details-for message, sending it to recipient");
-		
+		System.out.println("Server: received details-for message, sending it to recipient");	
 		UUID from = UUID.fromString(msgTokens[1]);
 		UUID to = UUID.fromString(msgTokens[2]);
 		System.out.println("from: " + from.toString() + " to:" + to.toString());
@@ -122,9 +122,51 @@ int numberOfClients = 0;
 			
 			}
 		}
+		
+		if(msgTokens[0].compareTo("rot") == 0) // receive “rotation”
+			{ 
+			System.out.println("Server: Received rot message from a client");
+			//	UUID clientID = UUID.fromString(msgTokens[1]);
+				String[] rot = {msgTokens[2], msgTokens[3], msgTokens[4]};
+				try{
+				sendRotMessages(clientID, rot);
+				}catch (Exception e) {
+				//e.printStackTrace();
+				System.out.println("Server: Throwing error in Process Packet: ");
+				System.out.println(e.toString());
+				System.out.println("Server: END THROW: Process Packet: ");
+				//super.removeClient(clientID);
+				//try{
+				//super.getServerSocket().close();
+				//} catch (IOException f) {f.printStackTrace();}
+				
+				}
+			}
 	
 		
 	}
+
+	private void sendRotMessages(UUID clientID, String[] rotation)
+		{
+		System.out.println("Server: sending rot message to all other clients");
+		try
+			{ 
+			String message = new String("rot," + clientID.toString());
+			message += "," + rotation[0];
+			message += "," + rotation[1];
+			message += "," + rotation[2];
+			//System.out.println("server sending rotate messages" + message);
+			try
+				{
+				forwardPacketToAll(message, clientID);
+				}
+			catch (SocketException e)
+				{
+				e.printStackTrace(); 
+				}
+			}
+		catch (IOException e) { e.printStackTrace();}	
+		}
 
 	public void sendJoinedMessage(UUID clientID, boolean success) throws SocketException
 	{ // format: join, success or join, failure
@@ -191,8 +233,6 @@ int numberOfClients = 0;
 			catch (SocketException e) 
 				{
 				e.printStackTrace(); 
-				super.removeClient(clientID);
-				super.getServerSocket().close();
 				}
 			}
 		catch (IOException e) { e.printStackTrace();}  

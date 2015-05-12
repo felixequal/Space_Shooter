@@ -114,6 +114,25 @@ public class MyClient extends GameConnectionClient
 					}
 				}
 			}
+//------------------------ RECEIVE “rot”----------------------------------------------------------
+		if(msgTokens[0].compareTo("rot") == 0) 
+			{
+			ghostID = UUID.fromString(msgTokens[1]);
+			//System.out.println("Received move message from server from: " + ghostID);
+			x = Double.parseDouble(msgTokens[2]);
+			y = Double.parseDouble(msgTokens[3]);
+			z = Double.parseDouble(msgTokens[4]);
+			Vector3D ghostcrVector = new Vector3D(x,y,z);
+			//System.out.println("move vector from other client: " + ghostVector.toString());			
+			for(GhostAvatar check: ghostAvatars)
+				{
+				if(check.getGhostID().equals(ghostID))
+					{
+					//System.out.println("found correct ghost. Moving: " + ghostID);
+					check.rotAvatar(ghostcrVector);
+					}
+				}
+			}
 //------------------------ RECEIVE “bye”----------------------------------------------------------		
 		if(msgTokens[0].compareTo("bye") == 0)
 			{
@@ -232,4 +251,16 @@ public void sendMoveMessage(Vector3D pos)
 		}
 		catch (IOException e) { e.printStackTrace(); }
 }
+
+public void sendRotMessage(Vector3D rot)
+{ 
+System.out.println("In MyClient: sending rot message");
+	try
+		{ String message = new String("rot," + id.toString());
+		message += "," + rot.getX()+"," + rot.getY() + "," + rot.getZ();
+		sendPacket(message);
+		}
+		catch (IOException e) { e.printStackTrace(); }
+}
+
 }

@@ -55,8 +55,8 @@ public class MyNetworkingClient extends BaseGame
 	PhysCube physCube;
 	MyClient thisClient;
 	InetAddress remAddr;
-	long start;
-	long end;
+	private float currentTime;
+	private float lastUpdatedTime;
 
 	private ScriptEngineManager factory;
 	private String worldScript = "scripts/SetupWorld.js";
@@ -67,6 +67,7 @@ public class MyNetworkingClient extends BaseGame
 	private int serverPort;
 	private IPhysicsEngine physicsEngine;
 	private IPhysicsObject shipBall, cubeP;
+	
 
 	public MyNetworkingClient(String serverAddr, int serverPrt)
 		{
@@ -133,7 +134,8 @@ public class MyNetworkingClient extends BaseGame
 		createSagePhysicsWorld();
 		// Run Signature Script
 		signature();
-		start = System.currentTimeMillis();
+		currentTime = System.nanoTime();
+		//elapsedTime = System.currentTimeMillis();
 		}
 
 	public void signature()
@@ -177,7 +179,6 @@ public class MyNetworkingClient extends BaseGame
 	public void initGameObjects()
 		{
 		physCubeList = new ArrayList<PhysCube>();
-		start = System.currentTimeMillis();
 		// Add SkyBox w/ ZBuffer disabled
 		skyBox = new Space(renderer);
 		skyBox.scale(500.0f, 500.0f, 500.0f);
@@ -203,10 +204,10 @@ public class MyNetworkingClient extends BaseGame
 				physCubeList.add(physCube);
 				addGameWorldObject(cube);
 			}
-		 planet = new Planet();
-		 planetGrp = planet.loadObject();
-		 planetGrp.translate(0, 0, 0);
-		 addGameWorldObject(planetGrp);
+		// planet = new Planet();
+		// planetGrp = planet.loadObject();
+		// planetGrp.translate(0, 0, 0);
+		// addGameWorldObject(planetGrp);
 		// Add other objects
 		ship = new SpaceShip(renderer, display);
 
@@ -268,7 +269,7 @@ public class MyNetworkingClient extends BaseGame
 		MoveBackwardAction backward = new MoveBackwardAction(ship.getCamera(),
 				ship);
 		PitchAction pitch = new PitchAction(ship.getCamera(), ship);
-		PitchUpAction pitchUp = new PitchUpAction(ship.getCamera(), ship);
+		PitchUpAction pitchUp = new PitchUpAction(thisClient, ship.getCamera(), ship);
 		PitchDownAction pitchDown = new PitchDownAction(ship.getCamera(), ship);
 		YawRightAction yawRight = new YawRightAction(ship.getCamera(), ship);
 		YawLeftAction yawLeft = new YawLeftAction(ship.getCamera(), ship);
@@ -319,10 +320,13 @@ public class MyNetworkingClient extends BaseGame
 	@Override
 	public void update(float elapsedTimeMS)
 		{
-		end = System.currentTimeMillis();
-		if (((end - start) / 100.0) > .016)
+		currentTime = System.nanoTime();
+		float elapsedTime = ((currentTime-lastUpdatedTime)/1000000.000f);
+		//System.out.println("elapsedTime: " + elapsedTime);
+		if (elapsedTime >= 10.0f)
 			{
-				start = System.currentTimeMillis();
+			System.out.println("TICK");
+				lastUpdatedTime = currentTime;
 				// Update ship's movement according to speed
 				ship.move();
 				if (thisClient != null)
@@ -334,8 +338,7 @@ public class MyNetworkingClient extends BaseGame
 				// Update SkyBox according to ship's position
 				Point3D camLoc = ship.getCamera().getLocation();
 				Matrix3D camTranslation = new Matrix3D();
-				camTranslation.translate(camLoc.getX(), camLoc.getY(),
-						camLoc.getZ());
+				camTranslation.translate(camLoc.getX(), camLoc.getY(), camLoc.getZ());
 				skyBox.setLocalTranslation(camTranslation);
 				Matrix3D mat;
 				Vector3D translateVec;
@@ -345,23 +348,13 @@ public class MyNetworkingClient extends BaseGame
 					if (s.getPhysicsObject()
 					}
 					*/
-				// thisClient.sendByeMessage();
-				// If Laser class ammoEmpty boolean is not true, then move any
-				// missile within the Laser's missile vector
-				// Spin Planet
-				 planetGrp.rotate(.5f, new Vector3D(0, 1, 0));
-				// Update everything in the world
+				// planetGrp.rotate(.5f, new Vector3D(0, 1, 0));
 				super.update(elapsedTimeMS);
 			}
-
-		// System.out.println("start:" + start);
-		// System.out.println("end-start" + ((end-start)));
 		}
 
 	public void setIsConnected(boolean b)
 		{
-		// TODO Auto-generated method stub
-
 		}
 
 	public Vector3D getPlayerPosition()
