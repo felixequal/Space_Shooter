@@ -15,6 +15,7 @@ public class Laser extends MoveableObject{
 	
 	public Laser(SpaceShip ship, float speed){
 		laser = new Sphere();
+		laser.setRenderMode(RENDER_MODE.OPAQUE);
 		this.ship = ship;
 		this.speed = speed;
 		laser.scale(0.1f, 0.1f, 0.1f);

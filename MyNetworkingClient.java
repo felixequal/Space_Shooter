@@ -22,6 +22,7 @@ import sage.scene.Group;
 import sage.scene.SceneNode;
 import sage.scene.TriMesh;
 import sage.scene.shape.Cube;
+import sage.scene.shape.Sphere;
 import sage.terrain.TerrainBlock;
 
 import javax.script.ScriptEngine;
@@ -66,7 +67,7 @@ public class MyNetworkingClient extends BaseGame
 	private String serverAddress;
 	private int serverPort;
 	private IPhysicsEngine physicsEngine;
-	private IPhysicsObject shipBall, cubeP;
+	private IPhysicsObject shipBall, cubeP, laserP;
 	private Matrix3D camTranslation;
 
 	public MyNetworkingClient(String serverAddr, int serverPrt)
@@ -123,7 +124,7 @@ public class MyNetworkingClient extends BaseGame
 						+ f.getExtensions());
 			}
 
-		// Add all game objects including skybox
+		//Add all game objects including skybox
 
 		initGameObjects();
 		// Run script
@@ -275,7 +276,7 @@ public class MyNetworkingClient extends BaseGame
 		TiltLeftAction tiltLeft = new TiltLeftAction(ship.getCamera(), ship);
 		
 		FireLaserAction fireLaser = new FireLaserAction(this, ship);
-		// /////////////////////////////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////////////////////////////////
 		kbName = im.getKeyboardName();
 		im.associateAction(kbName, Key.W, forward,
 				IInputManager.INPUT_ACTION_TYPE.ON_PRESS_AND_RELEASE);
@@ -352,7 +353,16 @@ public class MyNetworkingClient extends BaseGame
 				Matrix3D mat;
 				Vector3D translateVec;
 				physicsEngine.update(20.0f);
-				/*for (SceneNode s : getGameWorld())
+				for (SceneNode s : getGameWorld())
+					{ 
+					if (s.getPhysicsObject() != null)
+					{
+					mat = new Matrix3D(s.getPhysicsObject().getTransform());
+					translateVec = mat.getCol(3);
+					s.getLocalTranslation().setCol(3,translateVec);
+					}
+					}
+				/* for (SceneNode s : getGameWorld())
 					{
 					if (s.getPhysicsObject()
 					}
@@ -398,5 +408,16 @@ public class MyNetworkingClient extends BaseGame
 						e.printStackTrace();
 					}
 			}
+		}
+
+	public void addPhysicsObject(Sphere laserObj)
+		{
+		float mass = 5.0f;
+		laserP =  physicsEngine.addSphereObject(physicsEngine.nextUID(),mass, laserObj.getWorldTransform().getValues(), 1.0f);
+		laserP.setBounciness(1.0f);
+		float[] direction = {0.0f,-1.0f,0.0f};
+		laserP.setLinearVelocity(direction);
+		laserObj.setPhysicsObject(laserP);
+		
 		}
 	}

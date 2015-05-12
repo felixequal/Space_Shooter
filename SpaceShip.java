@@ -80,7 +80,6 @@ public class SpaceShip extends MoveableObject{
 	
 	public void setLocation(Point3D location) {
 		this.location = location;
-		
 		camera.setLocation(location);
 	}
 

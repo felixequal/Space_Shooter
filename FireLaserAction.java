@@ -26,5 +26,6 @@ public class FireLaserAction extends AbstractInputAction
 		laserObj.setLocalTranslation(mnc.getCamLocation());
 
 		mnc.addGameWorldObject(laserObj);
+		mnc.addPhysicsObject(laserObj);
 	}
 }
