@@ -189,6 +189,12 @@ public class MyNetworkingClient extends BaseGame
 		ship.setPhysicsObject(shipBall); 
 		}
 	}
+	
+	public void addGhostNPCtoGameWorld(GhostNPC newNPC)
+	{
+		addGameWorldObject(newNPC);
+	}
+	
 	public void initGameObjects()
 		{
 		physCubeList = new ArrayList<PhysCube>();
@@ -234,7 +240,7 @@ public class MyNetworkingClient extends BaseGame
 		addGameWorldObject(map.loadWall2());
 		addGameWorldObject(map.loadWall3());
 		addGameWorldObject(map.loadWall4());
-		addGameWorldObject(map.loadCargoShip());
+		//addGameWorldObject(map.loadCargoShip());
 		
 		// Load terrain
 		// terrain = new Terrain(this);

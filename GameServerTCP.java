@@ -11,13 +11,21 @@ import sage.networking.server.IClientInfo;
 public class GameServerTCP extends GameConnectionServer<UUID>
 {
 
-int numberOfClients = 0;
+	int numberOfClients = 0;
+	private NPCcontroller npcCtrl;
 
 	public GameServerTCP(int localPort) throws IOException
 	{ 
 		super(localPort, ProtocolType.TCP); 
 	}
 
+	
+	public void sendNPCinfo()
+	{
+		
+	}
+	
+	
 	@Override
 	public void acceptClient(IClientInfo ci, Object o) // override
 	{ 

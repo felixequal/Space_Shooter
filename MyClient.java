@@ -27,16 +27,35 @@ public class MyClient extends GameConnectionClient
 	private double x, y, z;
 	//GhostAvatar ghost;
 	private boolean removalFlag;
+	private Vector<GhostNPC> ghostNPCs;
+	private Vector3D position = new Vector3D(0,0,-20);
 	
 	public MyClient(InetAddress remAddr, int remPort, ProtocolType pType, MyNetworkingClient game) throws IOException
 	{
-		
 		super(remAddr, remPort, pType);
 		this.game = game;
 		this.id = UUID.randomUUID();
 		this.ghostAvatars = new ArrayList<GhostAvatar>();
+		createGhostNPC(position);
 	}
 	
+	//Add NPC model to gameworld here
+	public void createGhostNPC(Vector3D position)
+	{
+		GhostNPC newNPC = new GhostNPC(position);
+		ghostNPCs.addElement(newNPC);
+		game.addGhostNPCtoGameWorld(newNPC);
+	}
+	
+	public void updateGhostNPC(Vector3D position)
+	{
+		if(ghostNPCs.size()>0)
+		{
+			ghostNPCs.get(0).setPosition(position);
+		}
+	}
+	
+	////////////////////
 
 	@Override
 	protected void processPacket(Object msg)

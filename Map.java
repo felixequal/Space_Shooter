@@ -34,9 +34,9 @@ public class Map extends GameObject
 		wall4Obj.translate(-2, 6, -8);
 		loadWall4();
 		
-		cargoShipObj = loader.loadModel("models/cargoShip.obj");
+		/*cargoShipObj = loader.loadModel("models/cargoShip.obj");
 		cargoShipObj.translate(-40, 4, -60);
-		loadCargoShip();
+		loadCargoShip();*/
 	}
 	
 	public TriMesh loadWall1(){
