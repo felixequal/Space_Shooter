@@ -25,7 +25,7 @@ public class MoveForwardAction extends AbstractInputAction
 	@Override
 	public void performAction(float speed, Event e)
 	{
-		if(ship.getSpeed() < 5){		//Set a speed limit for aircraft
+		if(ship.getSpeed() < 12){		//Set a speed limit for aircraft
 			ship.setSpeed(ship.getSpeed() + 0.25f);
 			mnc.playThrustersSound();
 		}
