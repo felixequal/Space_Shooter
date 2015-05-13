@@ -73,16 +73,13 @@ public class MyNetworkingClient extends BaseGame
 	private String serverAddress;
 	private int serverPort;
 	private IPhysicsEngine physicsEngine;
-<<<<<<< HEAD
+
 	private IPhysicsObject shipBall, cubeP, laserP;
 	private Matrix3D camTranslation;
-=======
-	private IPhysicsObject shipBall, cubeP;
 	
 	IAudioManager audioMgr;
 	Sound thrusterSound;
 	AudioResource resource1;
->>>>>>> Audio
 
 	public MyNetworkingClient(String serverAddr, int serverPrt)
 		{
