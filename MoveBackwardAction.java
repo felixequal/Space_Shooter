@@ -11,9 +11,11 @@ public class MoveBackwardAction extends AbstractInputAction
 	private ICamera camera;
 	private SpaceShip ship;
 	private float speed;
+	private MyNetworkingClient mnc;
 	
-	public MoveBackwardAction(ICamera c, SpaceShip ship)
+	public MoveBackwardAction(MyNetworkingClient mnc, ICamera c, SpaceShip ship)
 	{
+		this.mnc = mnc;
 		this.camera = c;
 		this.ship = ship;
 	}
@@ -23,6 +25,7 @@ public class MoveBackwardAction extends AbstractInputAction
 	{
 		if(ship.getSpeed() > -5){
 			ship.setSpeed(ship.getSpeed() - 0.25f);
+			mnc.playThrustersSound();
 		}
 	}
 }
