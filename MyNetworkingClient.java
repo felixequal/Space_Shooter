@@ -11,6 +11,12 @@ import graphicslib3D.Matrix3D;
 import graphicslib3D.Point3D;
 import graphicslib3D.Vector3D;
 import sage.app.BaseGame;
+import sage.audio.AudioManagerFactory;
+import sage.audio.AudioResource;
+import sage.audio.AudioResourceType;
+import sage.audio.IAudioManager;
+import sage.audio.Sound;
+import sage.audio.SoundType;
 import sage.display.IDisplaySystem;
 import sage.input.IInputManager;
 import sage.networking.IGameConnection.ProtocolType;
@@ -68,6 +74,10 @@ public class MyNetworkingClient extends BaseGame
 	private int serverPort;
 	private IPhysicsEngine physicsEngine;
 	private IPhysicsObject shipBall, cubeP;
+	
+	IAudioManager audioMgr;
+	Sound thrusterSound;
+	AudioResource resource1;
 
 	public MyNetworkingClient(String serverAddr, int serverPrt)
 		{
@@ -130,6 +140,9 @@ public class MyNetworkingClient extends BaseGame
 		setupWorld();
 		// Setup rest of the game objects and inpu
 		initInput();
+		
+		initAudio();
+		
 		initPhysicsSystem();
 		createSagePhysicsWorld();
 		// Run Signature Script
@@ -271,10 +284,12 @@ public class MyNetworkingClient extends BaseGame
 		// findControls.listControllers(); //List out available controllers
 
 		// Add Action Classes
-		MoveForwardAction forward = new MoveForwardAction(thisClient,
+		MoveForwardAction forward = new MoveForwardAction(this, thisClient,
 				ship.getCamera(), ship);
-		MoveBackwardAction backward = new MoveBackwardAction(ship.getCamera(),
+		MoveBackwardAction backward = new MoveBackwardAction(this, ship.getCamera(),
 				ship);
+		StopMovingAction stop = new StopMovingAction(this, thisClient,
+				ship.getCamera(), ship);
 		PitchAction pitch = new PitchAction(ship.getCamera(), ship);
 		PitchUpAction pitchUp = new PitchUpAction(ship.getCamera(), ship);
 		PitchDownAction pitchDown = new PitchDownAction(ship.getCamera(), ship);
@@ -285,11 +300,11 @@ public class MyNetworkingClient extends BaseGame
 		// /////////////////////////////////////////////////////////////////////////////////////////////////////
 		kbName = im.getKeyboardName();
 		im.associateAction(kbName, Key.W, forward,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+		im.associateAction(kbName, Key.X, stop,
 				IInputManager.INPUT_ACTION_TYPE.ON_PRESS_AND_RELEASE);
-		// im.associateAction(kbName, Key.Q, removeStation
-		// ,IInputManager.INPUT_ACTION_TYPE.ON_PRESS_AND_RELEASE)
 		im.associateAction(kbName, Key.S, backward,
-				IInputManager.INPUT_ACTION_TYPE.ON_PRESS_AND_RELEASE);
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
 		im.associateAction(kbName, Key.DOWN, pitchUp,
 				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
 		im.associateAction(kbName, Key.UP, pitchDown,
@@ -323,6 +338,32 @@ public class MyNetworkingClient extends BaseGame
 						IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
 			}
 		}
+	
+	public void initAudio(){
+		audioMgr = AudioManagerFactory.createAudioManager("sage.audio.joal.JOALAudioManager");
+		
+		if(!audioMgr.initialize())
+		{
+			System.out.println("Audio Manager failed to initialize");
+			return;
+		}
+		resource1 = audioMgr.createAudioResource("sounds/thrusters.wav", AudioResourceType.AUDIO_SAMPLE);
+		
+		thrusterSound = new Sound(resource1, SoundType.SOUND_EFFECT, 100, true);
+		thrusterSound.initialize(audioMgr);
+		thrusterSound.setMaxDistance(50.0f);
+		thrusterSound.setMinDistance(3.0f);
+		thrusterSound.setRollOff(5.0f);
+		thrusterSound.setLocation(new Point3D(ship.getWorldTranslation().getCol(3)));
+	}
+	
+	public void playThrustersSound(){
+		thrusterSound.play();
+	}
+	
+	public void stopThrustersSound(){
+		thrusterSound.stop();
+	}
 
 	@Override
 	public void update(float elapsedTimeMS)
