@@ -80,11 +80,12 @@ public class MyNetworkingClient extends BaseGame
 	AudioResource resource1;
 
 	public MyNetworkingClient(String serverAddr, int serverPrt)
-		{
+	{
 		super();
 		this.serverAddress = serverAddr;
 		this.serverPort = serverPrt;
-		System.out.println("Server Addr: " + serverAddress);		}
+		System.out.println("Server Addr: " + serverAddress);		
+	}
 
 	@Override
 	public void initGame()
