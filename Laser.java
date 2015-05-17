@@ -20,6 +20,7 @@ public class Laser extends MoveableObject{
 		this.speed = speed;
 		laser.scale(0.1f, 0.1f, 0.1f);
 		laser.setColor(Color.RED);
+		laser.translate((float)ship.getLocation().getX(), (float)ship.getLocation().getY(), (float)ship.getLocation().getZ());
 	}
 	
 	public void move(){

@@ -26,7 +26,7 @@ public class YawLeftAction extends AbstractInputAction
 		Vector3D upDir = camera.getUpAxis();
 		Vector3D rightDir = camera.getRightAxis();
 		
-		rotationAmt.rotate(0.05f, upDir);
+		rotationAmt.rotate(0.1f, upDir);
 		
 		viewDir = viewDir.mult(rotationAmt);
 		rightDir = rightDir.mult(rotationAmt);

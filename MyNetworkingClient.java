@@ -81,6 +81,7 @@ public class MyNetworkingClient extends BaseGame
 	Sound thrusterSound;
 	AudioResource resource1;
 
+
 	public MyNetworkingClient(String serverAddr, int serverPrt)
 		{
 		super();
@@ -170,7 +171,7 @@ public class MyNetworkingClient extends BaseGame
 
 	protected void initPhysicsSystem()
 	{
-		String engine = "sage.physics.JBullet.JBulletPhysicsEngine";
+		String engine = "sage.physics.ODE4J.ODE4JPhysicsEngine";
 		physicsEngine = PhysicsEngineFactory.createPhysicsEngine(engine);
 		physicsEngine.initSystem();
 		float[] gravity = {0,0,0};
@@ -178,18 +179,18 @@ public class MyNetworkingClient extends BaseGame
 	}
 	
 	private void createSagePhysicsWorld()
-	{
+	{/*
 		float massCube =  1000.0f;
 		for (PhysCube pcube: physCubeList){
 		cubeP = physicsEngine.addBoxObject(physicsEngine.nextUID(),massCube,pcube.getCube().getWorldTransform().getValues(), pcube.getSize());
 		cubeP.setBounciness(1.0f);
 		pcube.getCube().setPhysicsObject(cubeP);
-		
+		}
 		float massShip = 5.0f;
 		shipBall =  physicsEngine.addSphereObject(physicsEngine.nextUID(),massShip,ship.getWorldTransform().getValues(), 1.0f);
 		shipBall.setBounciness(1.0f);
 		ship.setPhysicsObject(shipBall); 
-		}
+		*/
 	}
 	public void initGameObjects()
 		{
@@ -200,7 +201,7 @@ public class MyNetworkingClient extends BaseGame
 		addGameWorldObject(skyBox);
 		// Now enabled the ZBuffer
 		skyBox.getBuf().setDepthTestingEnabled(true);
-		for (int p = 0; p < 15; p++)
+		/*for (int p = 0; p < 15; p++)
 			{
 				Random r = new Random();
 				double a = rangeMin + (rangeMax - rangeMin) * r.nextDouble();
@@ -219,6 +220,7 @@ public class MyNetworkingClient extends BaseGame
 				physCubeList.add(physCube);
 				addGameWorldObject(cube);
 			}
+			*/
 		// planet = new Planet();
 		// planetGrp = planet.loadObject();
 		// planetGrp.translate(0, 0, 0);
@@ -227,8 +229,8 @@ public class MyNetworkingClient extends BaseGame
 		ship = new SpaceShip(renderer, display);
 
 		// Add Space Station
-		station = new SpaceStation();
-		addGameWorldObject(station.loadObject());
+		//station = new SpaceStation();
+		//addGameWorldObject(station.loadObject());
 
 		// Load terrain
 		// terrain = new Terrain(this);
@@ -315,7 +317,7 @@ public class MyNetworkingClient extends BaseGame
 		
 		im.associateAction(kbName, Key.SPACE, fireLaser,
 				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-
+			
 		// Check to see if gamepad is connected
 			if (!(im.getFirstGamepadName() == null))
 			{
@@ -375,7 +377,7 @@ public class MyNetworkingClient extends BaseGame
 		//System.out.println("elapsedTime: " + elapsedTime);
 		if (elapsedTime >= 10.0f)
 			{
-			System.out.println("TICK");
+			//System.out.println("TICK");
 				lastUpdatedTime = currentTime;
 				// Update ship's movement according to speed
 				ship.move();
@@ -384,7 +386,7 @@ public class MyNetworkingClient extends BaseGame
 						thisClient.processPackets();
 						thisClient.sendMoveMessage(ship.getLocationVec());
 					}
-				station.rotateStation();
+				//station.rotateStation();
 				// Update SkyBox according to ship's position
 				Point3D camLoc = ship.getCamera().getLocation();
 
@@ -394,7 +396,7 @@ public class MyNetworkingClient extends BaseGame
 				skyBox.setLocalTranslation(camTranslation);
 				Matrix3D mat;
 				Vector3D translateVec;
-				physicsEngine.update(20.0f);
+				physicsEngine.update(100.0f);
 				for (SceneNode s : getGameWorld())
 					{ 
 					if (s.getPhysicsObject() != null)
@@ -455,10 +457,12 @@ public class MyNetworkingClient extends BaseGame
 	public void addPhysicsObject(Sphere laserObj)
 		{
 		float mass = 5.0f;
-		laserP =  physicsEngine.addSphereObject(physicsEngine.nextUID(),mass, laserObj.getWorldTransform().getValues(), 1.0f);
+		laserP =  physicsEngine.addSphereObject(physicsEngine.nextUID(), mass, laserObj.getWorldTransform().getValues(), 1.0f);
 		laserP.setBounciness(1.0f);
-		float[] direction = {0.0f,-1.0f,0.0f};
+		float[] direction = {3.0f, 0.0f,0.0f};
 		laserP.setLinearVelocity(direction);
+		laserP.setDamping(0,0);
+		laserP.setFriction(0);
 		laserObj.setPhysicsObject(laserP);
 		
 		}

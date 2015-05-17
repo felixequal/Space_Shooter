@@ -28,6 +28,7 @@ public class SpaceShip extends MoveableObject{
 	private boolean ammoEmpty;
 	private Vector3D locVec;
 	private Vector3D viewDir;
+	private float lastUpdatedTime;
 	
 	//Build constructor
 	public SpaceShip(IRenderer renderer, IDisplaySystem display){
@@ -39,7 +40,9 @@ public class SpaceShip extends MoveableObject{
 		camera.setPerspectiveFrustum(45,1,0.01,1000);
 		speed = 0.0f;
 		setLocation(location);
+		lastUpdatedTime = System.nanoTime();
 		initHUD();
+		
 	}
 	
 	public void initHUD(){
@@ -54,18 +57,29 @@ public class SpaceShip extends MoveableObject{
 	
 	////////////////////////////////FIRE WEAPONS/////////////////////////////////////////////////////////////////////
 	//Check to see if ship has any ammo left. If so, keep moving all lasers in Vector<> and check for collisions
-	public void fireLaser(){
-		laser = new Laser(this, 6);	//Laser needs a ship and speed in order to fire
-		laserObj = laser.getLaser();
-		//laserObj.setWorldTranslation(this.getWorldTranslation());
-		laserStorage.add(laser);	//Add laser to vector array
-		
-		if(laserStorage == null){
+	public void fireLaser()
+		{
+		//float currentTime = System.nanoTime();
+		//float elapsedTime = ((currentTime-lastUpdatedTime)/10000000.0f);
+		//if (elapsedTime > 50.0f)
+			//{
+			//System.out.println("Creating laser:");
+			//System.out.println("CurrentTime: " + currentTime);
+			//System.out.println("elapsedTime: " + elapsedTime);
+			//System.out.println("LUTime: " + lastUpdatedTime);
+			//lastUpdatedTime = currentTime;
+			laser = new Laser(this, 6);	//Laser needs a ship and speed in order to fire
+			laserObj = laser.getLaser();
+			//laserObj.setWorldTranslation(this.getWorldTranslation());
+			laserStorage.add(laser);	//Add laser to vector array
+			if(laserStorage == null){
 			ammoEmpty = true;
-		}else{
+			}else{
 			ammoEmpty = false;
+			}
+			//}
+
 		}
-	}
 	
 	public Sphere getLaserOBj(){
 		return laserObj;
