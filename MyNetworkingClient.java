@@ -457,9 +457,16 @@ public class MyNetworkingClient extends BaseGame
 	public void addPhysicsObject(Sphere laserObj)
 		{
 		float mass = 5.0f;
-		laserP =  physicsEngine.addSphereObject(physicsEngine.nextUID(), mass, laserObj.getWorldTransform().getValues(), 1.0f);
+		Matrix3D goddammit = new Matrix3D();
+		Vector3D bulletOrigin = ship.getLocationVec();
+		bulletOrigin.setY(bulletOrigin.getY()-0.8);
+		goddammit.setCol(3, bulletOrigin);
+		laserP =  physicsEngine.addSphereObject(physicsEngine.nextUID(), mass, goddammit.getValues(), 1.0f);
 		laserP.setBounciness(1.0f);
-		float[] direction = {3.0f, 0.0f,0.0f};
+		float Xdir = (float) ship.getCamera().getViewDirection().getX();
+		float Ydir = (float) ship.getCamera().getViewDirection().getY();
+		float Zdir = (float) ship.getCamera().getViewDirection().getZ();
+		float[] direction = {Xdir*3, Ydir*3,Zdir*3};
 		laserP.setLinearVelocity(direction);
 		laserP.setDamping(0,0);
 		laserP.setFriction(0);
