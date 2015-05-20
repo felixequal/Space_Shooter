@@ -23,7 +23,7 @@ public class MoveBackwardAction extends AbstractInputAction
 	@Override
 	public void performAction(float speed, Event e)
 	{
-		if(ship.getSpeed() > -5){
+		if(ship.getSpeed() > -12){
 			ship.setSpeed(ship.getSpeed() - 0.25f);
 			mnc.playThrustersSound();
 		}

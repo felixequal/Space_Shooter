@@ -26,7 +26,7 @@ public class TiltRightAction extends AbstractInputAction
 		Vector3D upDir = camera.getUpAxis();
 		Vector3D rightDir = camera.getRightAxis();
 		
-		rotationAmt.rotate(0.05f, viewDir);
+		rotationAmt.rotate(0.15f, viewDir);
 		
 		upDir = upDir.mult(rotationAmt);
 		rightDir = rightDir.mult(rotationAmt);

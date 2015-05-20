@@ -51,6 +51,7 @@ public class MyNetworkingClient extends BaseGame
 	private String gpName, kbName;
 	private FindComponents findControls;
 	private SpaceStation station;
+	private Map map;
 	private Planet planet;
 	private Cube cube;
 	private Group planetGrp;
@@ -225,6 +226,13 @@ public class MyNetworkingClient extends BaseGame
 		// planetGrp = planet.loadObject();
 		// planetGrp.translate(0, 0, 0);
 		// addGameWorldObject(planetGrp);
+=======
+			}*/
+		 planet = new Planet();
+		 planetGrp = planet.loadObject();
+		 planetGrp.translate(0, 0, 0);
+		 addGameWorldObject(planetGrp);
+>>>>>>> Map
 		// Add other objects
 		ship = new SpaceShip(renderer, display);
 
@@ -232,6 +240,13 @@ public class MyNetworkingClient extends BaseGame
 		//station = new SpaceStation();
 		//addGameWorldObject(station.loadObject());
 
+		map = new Map();
+		addGameWorldObject(map.loadWall1());
+		addGameWorldObject(map.loadWall2());
+		addGameWorldObject(map.loadWall3());
+		addGameWorldObject(map.loadWall4());
+		addGameWorldObject(map.loadCargoShip());
+		
 		// Load terrain
 		// terrain = new Terrain(this);
 		//tBlock = terrain.getTerrain();
