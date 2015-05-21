@@ -496,9 +496,8 @@ public class MyNetworkingClient extends BaseGame
 					}
 					*/
 				planetGrp.rotate(.5f, new Vector3D(0, 1, 0));
-				super.update(elapsedTimeMS);
 				
-				if(ship.getHealth() == 6){
+				/*if(ship.getHealth() == 6){
 					healthImage.setImage("textures/healthImage_5.jpg");
 				}else{
 					if(ship.getHealth() == 5){
@@ -518,7 +517,8 @@ public class MyNetworkingClient extends BaseGame
 							}
 						}
 					}
-				}
+				}*/
+				super.update(elapsedTimeMS);
 			}
 		}
 
