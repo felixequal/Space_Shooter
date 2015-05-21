@@ -490,9 +490,8 @@ public class MyNetworkingClient extends BaseGame
 					}
 					*/
 				planetGrp.rotate(.5f, new Vector3D(0, 1, 0));
-				super.update(elapsedTimeMS);
 				
-				if(ship.getHealth() == 6){
+				/*if(ship.getHealth() == 6){
 					healthImage.setImage("textures/healthImage_5.jpg");
 				}else{
 					if(ship.getHealth() == 5){
@@ -512,28 +511,9 @@ public class MyNetworkingClient extends BaseGame
 							}
 						}
 					}
-				}
-			station.rotateStation();
-			// Update SkyBox according to ship's position
-			Point3D camLoc = ship.getCamera().getLocation();
-			camTranslation = new Matrix3D();
-			camTranslation.translate(camLoc.getX(), camLoc.getY(), camLoc.getZ());
-			skyBox.setLocalTranslation(camTranslation);
-			Matrix3D mat;
-			Vector3D translateVec;
-			physicsEngine.update(200.0f);
-			for (SceneNode s : getGameWorld())
-				{
-				if (s.getPhysicsObject() != null)
-					{
-					mat = new Matrix3D(s.getPhysicsObject().getTransform());
-					translateVec = mat.getCol(3);
-					s.getLocalTranslation().setCol(3, translateVec);
-					}
-				}
-			checkLaserTTL();
-			planetGrp.rotate(.5f, new Vector3D(0, 1, 0));
-			super.update(elapsedTimeMS);
+				}*/
+				super.update(elapsedTimeMS);
+
 			}
 		}
 
