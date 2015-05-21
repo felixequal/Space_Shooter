@@ -283,9 +283,10 @@ public class MyNetworkingClient extends BaseGame
 		addGameWorldObject(map.loadWall4());
 		addGameWorldObject(map.loadCargoShip());
 		// Load terrain
-		// terrain = new Terrain(this);
-		// tBlock = terrain.getTerrain();
-		// addGameWorldObject(tBlock);
+		terrain = new Terrain(this);
+		tBlock = terrain.getTerrain();
+		tBlock.translate(0, -5, 0);
+		addGameWorldObject(tBlock);
 		}
 
 	public void addGameWorldObject(SceneNode obj)
