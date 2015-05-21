@@ -173,7 +173,7 @@ public class MyNetworkingClient extends BaseGame
 
 	protected void initPhysicsSystem()
 	{
-		String engine = "sage.physics.JBullet.JBulletPhysicsEngine";
+		String engine = "sage.physics.ODE4J.ODE4JPhysicsEngine";
 		physicsEngine = PhysicsEngineFactory.createPhysicsEngine(engine);
 		physicsEngine.initSystem();
 		float[] gravity = {0,0,0};
@@ -434,7 +434,7 @@ public class MyNetworkingClient extends BaseGame
 				skyBox.setLocalTranslation(camTranslation);
 				Matrix3D mat;
 				Vector3D translateVec;
-				physicsEngine.update(100.0f);
+				physicsEngine.update(200.0f);
 				for (SceneNode s : getGameWorld())
 					{ 
 					if (s.getPhysicsObject() != null)
@@ -497,7 +497,7 @@ public class MyNetworkingClient extends BaseGame
 		float mass = 5.0f;
 		Matrix3D goddammit = new Matrix3D();
 		Vector3D bulletOrigin = ship.getLocationVec();
-		bulletOrigin.setY(bulletOrigin.getY()-0.8);
+		bulletOrigin.setY(bulletOrigin.getY()-0.2);
 		goddammit.setCol(3, bulletOrigin);
 		laserP =  physicsEngine.addSphereObject(physicsEngine.nextUID(), mass, goddammit.getValues(), 1.0f);
 		laserP.setBounciness(1.0f);
