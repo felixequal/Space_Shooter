@@ -26,6 +26,7 @@ import sage.physics.IPhysicsObject;
 import sage.physics.PhysicsEngineFactory;
 import sage.renderer.IRenderer;
 import sage.scene.Group;
+import sage.scene.HUDImage;
 import sage.scene.HUDString;
 import sage.scene.SceneNode;
 import sage.scene.TriMesh;
@@ -79,6 +80,8 @@ public class MyNetworkingClient extends BaseGame
 
 	private IPhysicsObject shipBall, cubeP, laserP;
 	private Matrix3D camTranslation;
+	private HUDImage cockpit, screen, healthImage, speedImage;
+	private HUDImage spd_Image;
 	
 	IAudioManager audioMgr;
 	Sound thrusterSound;
@@ -147,6 +150,8 @@ public class MyNetworkingClient extends BaseGame
 		initInput();
 		
 		initAudio();
+		
+		initHUD();
 				
 		initPhysicsSystem();
 		createSagePhysicsWorld();
@@ -395,6 +400,47 @@ public class MyNetworkingClient extends BaseGame
 		thrusterSound.setLocation(new Point3D(ship.getWorldTranslation().getCol(3)));
 	}
 	
+	public void initHUD(){
+		cockpit = new HUDImage("Textures/cockpit.png");
+		cockpit.rotateImage(180.0f);
+		cockpit.scale(2.0f, 0.8f, 1.0f);
+		cockpit.setLocation(0,-0.6);
+		cockpit.setRenderMode(sage.scene.SceneNode.RENDER_MODE.ORTHO);
+		cockpit.setCullMode(sage.scene.SceneNode.CULL_MODE.NEVER);
+		ship.getCamera().addToHUD(cockpit);
+		
+		screen = new HUDImage("Textures/screen.jpg");
+		screen.setLocation(0, -0.7);
+		screen.scale(0.45f, 0.9f, 0.7f);
+		screen.setRenderMode(sage.scene.SceneNode.RENDER_MODE.ORTHO);
+		screen.setCullMode(sage.scene.SceneNode.CULL_MODE.NEVER);
+		ship.getCamera().addToHUD(screen);
+		
+		healthImage = new HUDImage("Textures/healthImage.png");
+		healthImage.rotateImage(180.0f);
+		healthImage.scale(0.2f,  0.2f, 1.0f);
+		healthImage.setLocation(-0.1, -0.4);
+		healthImage.setRenderMode(sage.scene.SceneNode.RENDER_MODE.ORTHO);
+		healthImage.setCullMode(sage.scene.SceneNode.CULL_MODE.NEVER);
+		ship.getCamera().addToHUD(healthImage);
+		
+		speedImage = new HUDImage("Textures/speedImage.png");
+		speedImage.rotateImage(180.0f);
+		speedImage.scale(0.2f,  0.2f, 1.0f);
+		speedImage.setLocation(-0.1, -0.6);
+		speedImage.setRenderMode(sage.scene.SceneNode.RENDER_MODE.ORTHO);
+		speedImage.setCullMode(sage.scene.SceneNode.CULL_MODE.NEVER);
+		ship.getCamera().addToHUD(speedImage);
+		
+		healthImage = new HUDImage("Textures/healthImage_5.jpg");
+		//healthImage_5.rotateImage(180.0f);
+		healthImage.scale(0.1f,  0.1f, 1.0f);
+		healthImage.setLocation(0.075, -0.39);
+		healthImage.setRenderMode(sage.scene.SceneNode.RENDER_MODE.ORTHO);
+		healthImage.setCullMode(sage.scene.SceneNode.CULL_MODE.NEVER);
+		ship.getCamera().addToHUD(healthImage);
+	}
+	
 	public void playThrustersSound(){
 		thrusterSound.play();
 	}
@@ -451,6 +497,14 @@ public class MyNetworkingClient extends BaseGame
 					*/
 				planetGrp.rotate(.5f, new Vector3D(0, 1, 0));
 				super.update(elapsedTimeMS);
+				
+				if(ship.getHealth() == 6){
+					healthImage.setImage("textures/healthImage_5.jpg");
+				}else{
+					if(ship.getHealth() == 5){
+						healthImage.setImage("textures/healthImage_4.jpg");
+					}
+				}
 			}
 		}
 
