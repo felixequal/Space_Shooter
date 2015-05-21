@@ -83,17 +83,29 @@ public class MyNetworkingClient extends BaseGame
 	private HUDImage cockpit, screen, healthImage, speedImage;
 	private HUDImage spd_Image;
 	
+	double x;
+	double z;
+	double theta;
+	float a = 0.1f;
+	float b = 0.1f;
+	float r = 1.0f;
+	
 	IAudioManager audioMgr;
 	Sound thrusterSound;
 	AudioResource resource1;
 
 
 	public MyNetworkingClient(String serverAddr, int serverPrt)
-		{
+	{
 		super();
 		this.serverAddress = serverAddr;
 		this.serverPort = serverPrt;
-		System.out.println("Server Addr: " + serverAddress);		}
+		System.out.println("Server Addr: " + serverAddress);
+		
+		x = 0;
+		z = 0;
+		theta = 45;
+	}
 
 	@Override
 	public void initGame()
@@ -518,6 +530,19 @@ public class MyNetworkingClient extends BaseGame
 						}
 					}
 				}*/
+				
+				////Basic NPC///////
+				
+			/*	theta = theta + Math.toRadians(10);
+				x = a + r*Math.cos(theta);
+				z = b + r*Math.sin(theta);*/
+				
+				/*if(z >= -5) {
+					z = z - 0.001f;
+					map.loadCargoShip().translate(0, 0, -.001f);
+				}*/
+				
+				
 				super.update(elapsedTimeMS);
 			}
 		}
