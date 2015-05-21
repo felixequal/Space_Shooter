@@ -3,6 +3,7 @@ package space_shooter;
 import graphicslib3D.Point3D;
 import graphicslib3D.Vector3D;
 
+import java.awt.Color;
 import java.util.Random;
 import java.util.Vector;
 
@@ -10,6 +11,7 @@ import sage.camera.ICamera;
 import sage.display.IDisplaySystem;
 import sage.renderer.IRenderer;
 import sage.scene.HUDImage;
+import sage.scene.HUDString;
 import sage.scene.TriMesh;
 import sage.scene.shape.Sphere;
 
@@ -20,7 +22,7 @@ public class SpaceShip extends MoveableObject{
 	private ICamera camera;
 	private IRenderer renderer;
 	private IDisplaySystem display;
-	private HUDImage cockpit;
+	private HUDImage cockpit, screen;
 	private float speed;
 	private Laser laser;
 	private Sphere laserObj;
@@ -30,8 +32,14 @@ public class SpaceShip extends MoveableObject{
 	private Vector3D viewDir;
 	private float lastUpdatedTime;
 	
+	private HUDString scoreHUD, healthHUD, ammoHUD;
+	private int score, health, ammo;
+	
 	//Build constructor
 	public SpaceShip(IRenderer renderer, IDisplaySystem display){
+		score = 0;
+		health = 100;
+		ammo = 20;
 		this.renderer = renderer;
 		this.display = display;
 		rand = new Random(50);
@@ -52,7 +60,23 @@ public class SpaceShip extends MoveableObject{
 		cockpit.setLocation(0,-0.6);
 		cockpit.setRenderMode(sage.scene.SceneNode.RENDER_MODE.ORTHO);
 		cockpit.setCullMode(sage.scene.SceneNode.CULL_MODE.NEVER);
-		//this.addToHUD(cockpit);
+		camera.addToHUD(cockpit);
+		
+		screen = new HUDImage("Textures/screen.jpg");
+		screen.setLocation(0, -0.7);
+		screen.scale(0.45f, 0.9f, 0.7f);
+		screen.setColor(Color.yellow);
+		screen.setRenderMode(sage.scene.SceneNode.RENDER_MODE.ORTHO);
+		screen.setCullMode(sage.scene.SceneNode.CULL_MODE.NEVER);
+		camera.addToHUD(screen);
+		
+		scoreHUD = new HUDString("Score: " + score);
+		scoreHUD.setName("score");
+		scoreHUD.setColor(Color.green);
+		scoreHUD.setLocation(0.5, 0.5);
+		scoreHUD.setRenderMode(sage.scene.SceneNode.RENDER_MODE.ORTHO);
+		scoreHUD.setCullMode(sage.scene.SceneNode.CULL_MODE.NEVER);
+		camera.addToHUD(scoreHUD);
 	}
 	
 	////////////////////////////////FIRE WEAPONS/////////////////////////////////////////////////////////////////////

@@ -3,6 +3,7 @@ package space_shooter;
  * If there is no server, it ignores network functionality and just runs standalone.
  * 
  */
+import java.awt.Color;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -25,6 +26,7 @@ import sage.physics.IPhysicsObject;
 import sage.physics.PhysicsEngineFactory;
 import sage.renderer.IRenderer;
 import sage.scene.Group;
+import sage.scene.HUDString;
 import sage.scene.SceneNode;
 import sage.scene.TriMesh;
 import sage.scene.shape.Cube;
@@ -92,7 +94,7 @@ public class MyNetworkingClient extends BaseGame
 
 	@Override
 	public void initGame()
-		{
+		{		
 		try
 			{
 				remAddr = InetAddress.getByName(serverAddress);
@@ -146,7 +148,7 @@ public class MyNetworkingClient extends BaseGame
 		initInput();
 		
 		initAudio();
-		
+				
 		initPhysicsSystem();
 		createSagePhysicsWorld();
 		// Run Signature Script
@@ -226,13 +228,10 @@ public class MyNetworkingClient extends BaseGame
 		// planetGrp = planet.loadObject();
 		// planetGrp.translate(0, 0, 0);
 		// addGameWorldObject(planetGrp);
-=======
-			}*/
 		 planet = new Planet();
 		 planetGrp = planet.loadObject();
 		 planetGrp.translate(0, 0, 0);
 		 addGameWorldObject(planetGrp);
->>>>>>> Map
 		// Add other objects
 		ship = new SpaceShip(renderer, display);
 

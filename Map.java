@@ -15,6 +15,7 @@ public class Map extends GameObject
 	private TriMesh wall4Obj = new TriMesh();
 	private TriMesh cargoShipObj = new TriMesh();
 	private OBJLoader loader = new OBJLoader();
+	private Texture cargoT;
 	
 	public Map()
 	{
@@ -35,6 +36,9 @@ public class Map extends GameObject
 		loadWall4();
 		
 		cargoShipObj = loader.loadModel("models/cargoShip.obj");
+		cargoT = TextureManager.loadTexture2D("textures/cargoShip_UV.jpg");
+		cargoT.setApplyMode(ApplyMode.Modulate);
+		cargoShipObj.setTexture(cargoT);
 		cargoShipObj.translate(-40, 4, -60);
 		loadCargoShip();
 	}

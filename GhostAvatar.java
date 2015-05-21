@@ -86,5 +86,4 @@ public class GhostAvatar extends TriMesh
 		shipObj.setLocalRotation(mat);
 		//shipObj.setLocalRotation(mat);
 		}
-
 	}
