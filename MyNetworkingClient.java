@@ -157,6 +157,8 @@ public class MyNetworkingClient extends BaseGame
 		initInput();
 
 		initAudio();
+		
+		initHUD();
 
 		initPhysicsSystem();
 		createSagePhysicsWorld();
