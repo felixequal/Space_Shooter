@@ -18,17 +18,17 @@ public class GhostAvatar extends TriMesh
 
 	private Pyramid testPyramid;
 	private Matrix3D positionMat;
+	private Matrix3D rotationMat;
 	private Vector3D positionVec;
 	private Vector3D rotationVec;
 	private UUID ghostID;
-
 	private TriMesh shipObj = new TriMesh();
 	private OBJLoader loader = new OBJLoader();
 	private Texture shipT;
 
 	public GhostAvatar(UUID id, Vector3D initPosition)
 		{
-
+		rotationVec = new Vector3D(0,0,0);
 		ghostID = id;
 		System.out.println("ghost avatar created: ID: " + ghostID);
 		//positionVec = initPosition;
@@ -76,14 +76,19 @@ public class GhostAvatar extends TriMesh
 		shipObj.setLocalTranslation(mat);
 		}
 
-	public void rotAvatar(Vector3D newRot)
-		{
+	public void rotAvatar(float amount, Vector3D axis)
+	
+		{System.out.println("GhostAvatar:RotAvatar:amount: " + amount + " axis: " + axis );
+		rotationMat = shipObj.getLocalRotation();
+		rotationMat.rotate(amount, axis);
+		//shipObj.rotate(amount, axis);
+		shipObj.setLocalRotation(rotationMat);
 		System.out.println("in Ghost Avatar: Rotating avatar");
-		System.out.println("rot vector: " + newRot.toString());
-		Matrix3D mat = shipObj.getLocalRotation();
-		newRot.mult(mat);
-		mat.rotate(newRot.getX(), newRot.getY(), newRot.getZ());
-		shipObj.setLocalRotation(mat);
+		//System.out.println("rot vector: " + newRot.toString());
+		//Matrix3D mat = shipObj.getLocalRotation();
+		//newRot.mult(mat);
+		//mat.rotate(newRot.getX(), newRot.getY(), newRot.getZ());
+		//shipObj.setLocalRotation(mat);
 		//shipObj.setLocalRotation(mat);
 		}
 	}

@@ -127,7 +127,7 @@ int numberOfClients = 0;
 			{ 
 			System.out.println("Server: Received rot message from a client");
 			//	UUID clientID = UUID.fromString(msgTokens[1]);
-				String[] rot = {msgTokens[2], msgTokens[3], msgTokens[4]};
+				String[] rot = {msgTokens[2], msgTokens[3], msgTokens[4], msgTokens[5]};
 				try{
 				sendRotMessages(clientID, rot);
 				}catch (Exception e) {
@@ -155,6 +155,7 @@ int numberOfClients = 0;
 			message += "," + rotation[0];
 			message += "," + rotation[1];
 			message += "," + rotation[2];
+			message += "," + rotation[3];
 			//System.out.println("server sending rotate messages" + message);
 			try
 				{

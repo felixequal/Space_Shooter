@@ -2,7 +2,7 @@ package space_shooter;
 
 import sage.scene.shape.Cube;
 
-public class PhysCube
+public class PhysCube extends Cube
 	{
 private float sizeX;
 private float sizeY;
