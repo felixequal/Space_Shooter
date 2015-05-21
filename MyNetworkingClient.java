@@ -260,8 +260,8 @@ public class MyNetworkingClient extends BaseGame
 		ship = new SpaceShip(renderer, display);
 
 		// Add Space Station
-		//station = new SpaceStation();
-		//addGameWorldObject(station.loadObject());
+		station = new SpaceStation();
+		addGameWorldObject(station.loadObject());
 
 		map = new Map();
 		addGameWorldObject(map.loadWall1());
@@ -424,7 +424,7 @@ public class MyNetworkingClient extends BaseGame
 						thisClient.processPackets();
 						thisClient.sendMoveMessage(ship.getLocationVec());
 					}
-				//station.rotateStation();
+				station.rotateStation();
 				// Update SkyBox according to ship's position
 				Point3D camLoc = ship.getCamera().getLocation();
 
@@ -449,7 +449,7 @@ public class MyNetworkingClient extends BaseGame
 					if (s.getPhysicsObject()
 					}
 					*/
-				// planetGrp.rotate(.5f, new Vector3D(0, 1, 0));
+				planetGrp.rotate(.5f, new Vector3D(0, 1, 0));
 				super.update(elapsedTimeMS);
 			}
 		}
