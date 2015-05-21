@@ -35,6 +35,7 @@ private MyClient client;
 		
 		camera.setRightAxis(rightDir.normalize());
 		camera.setViewDirection(viewDir.normalize());
+		camera.setUpAxis(upDir.normalize());
 		ship.setCamera(camera);
 		if (client != null)
 			{

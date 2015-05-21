@@ -35,6 +35,7 @@ public class PitchUpAction extends AbstractInputAction
 		
 		camera.setUpAxis(upDir.normalize());
 		camera.setViewDirection(viewDir.normalize());
+		camera.setRightAxis(rightDir.normalize());
 		ship.setCamera(camera);
 		if (client != null)
 			{
