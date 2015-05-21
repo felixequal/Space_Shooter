@@ -458,6 +458,7 @@ public class MyNetworkingClient extends BaseGame
 			//System.out.println("TICK");
 				lastUpdatedTime = currentTime;
 				// Update ship's movement according to speed
+				checkLaserTTL();
 				ship.move();
 				if (thisClient != null)
 					{
