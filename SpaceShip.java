@@ -109,7 +109,7 @@ public class SpaceShip extends MoveableObject{
 	public Vector<Laser> getLaserStorage(){
 		return laserStorage;
 	}
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	
 	public void setCamera(ICamera camera){this.camera = camera;}
 	public ICamera getCamera(){return camera;}

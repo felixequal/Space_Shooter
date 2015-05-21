@@ -46,6 +46,7 @@ import java.util.*;
 
 public class MyNetworkingClient extends BaseGame
 {
+private static final int bulletspeed = 20;
 private IDisplaySystem display;
 private IRenderer renderer;
 private IInputManager im;
@@ -391,8 +392,6 @@ public void update(float elapsedTimeMS)
 	// System.out.println("elapsedTime: " + elapsedTime);
 	if (elapsedTime >= 10.0f)
 		{
-
-		//System.out.println("TICK");
 		lastUpdatedTime = currentTime;
 		// Update ship's movement according to speed
 		ship.move();
@@ -404,10 +403,8 @@ public void update(float elapsedTimeMS)
 		station.rotateStation();
 		// Update SkyBox according to ship's position
 		Point3D camLoc = ship.getCamera().getLocation();
-
 		camTranslation = new Matrix3D();
 		camTranslation.translate(camLoc.getX(), camLoc.getY(), camLoc.getZ());
-
 		skyBox.setLocalTranslation(camTranslation);
 		Matrix3D mat;
 		Vector3D translateVec;
@@ -420,11 +417,6 @@ public void update(float elapsedTimeMS)
 				translateVec = mat.getCol(3);
 				s.getLocalTranslation().setCol(3, translateVec);
 				}
-			/* for (SceneNode s : getGameWorld())
-					{
-					if (s.getPhysicsObject()
-					}
-			 */
 			}
 		planetGrp.rotate(.5f, new Vector3D(0, 1, 0));
 		super.update(elapsedTimeMS);
@@ -432,13 +424,11 @@ public void update(float elapsedTimeMS)
 	}
 
 public void setIsConnected(boolean b)
-	{
-	}
+	{}
 
 public Vector3D getPlayerPosition()
 	{
 	Vector3D playerPositionVector = new Vector3D(ship.getLocation());
-	// TODO Auto-generated method stub
 	return playerPositionVector;
 	}
 
@@ -456,7 +446,6 @@ public void shutdown()
 			thisClient.shutdown();
 			} catch (IOException e1)
 			{
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 			}
 		try
@@ -464,7 +453,6 @@ public void shutdown()
 			Thread.sleep(4000);
 			} catch (InterruptedException e)
 			{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			}
 		}
@@ -473,17 +461,17 @@ public void shutdown()
 public void addPhysicsObject(Sphere laserObj)
 	{
 	float mass = 5.0f;
-	Matrix3D goddammit = new Matrix3D();
+	Matrix3D bulletMat = new Matrix3D();
 	Vector3D bulletOrigin = ship.getLocationVec();
 	bulletOrigin.setY(bulletOrigin.getY() - 0.2);
-	goddammit.setCol(3, bulletOrigin);
-	laserP = physicsEngine.addSphereObject(physicsEngine.nextUID(), mass, goddammit.getValues(), 1.0f);
+	bulletMat.setCol(3, bulletOrigin);
+	laserP = physicsEngine.addSphereObject(physicsEngine.nextUID(), mass, bulletMat.getValues(), 1.0f);
 	laserP.setBounciness(1.0f);
 	float Xdir = (float) ship.getCamera().getViewDirection().getX();
 	float Ydir = (float) ship.getCamera().getViewDirection().getY();
 	float Zdir = (float) ship.getCamera().getViewDirection().getZ();
 	float[] direction =
-				{ Xdir * 20, Ydir * 20, Zdir * 20 };
+				{ Xdir * bulletspeed, Ydir * bulletspeed, Zdir * bulletspeed};
 	laserP.setLinearVelocity(direction);
 	laserP.setDamping(0, 0);
 	laserP.setFriction(0);
