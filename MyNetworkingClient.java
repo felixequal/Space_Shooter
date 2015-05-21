@@ -253,16 +253,21 @@ public class MyNetworkingClient extends BaseGame
 		ship = new SpaceShip(renderer, display);
 
 		// Add Space Station
-		// station = new SpaceStation();
-		// addGameWorldObject(station.loadObject());
+<<<<<<< HEAD
 
-		// map = new Map();
-		// addGameWorldObject(map.loadWall1());
-		// addGameWorldObject(map.loadWall2());
-		// addGameWorldObject(map.loadWall3());
-		// addGameWorldObject(map.loadWall4());
-		// addGameWorldObject(map.loadCargoShip());
 
+=======
+		station = new SpaceStation();
+		addGameWorldObject(station.loadObject());
+
+		map = new Map();
+		addGameWorldObject(map.loadWall1());
+		addGameWorldObject(map.loadWall2());
+		addGameWorldObject(map.loadWall3());
+		addGameWorldObject(map.loadWall4());
+		addGameWorldObject(map.loadCargoShip());
+		
+>>>>>>> origin/master
 		// Load terrain
 		// terrain = new Terrain(this);
 		// tBlock = terrain.getTerrain();
@@ -389,40 +394,47 @@ public class MyNetworkingClient extends BaseGame
 		// System.out.println("elapsedTime: " + elapsedTime);
 		if (elapsedTime >= 10.0f)
 			{
-			// System.out.println("TICK");
-			lastUpdatedTime = currentTime;
-			// Update ship's movement according to speed
-			ship.move();
-			if (thisClient != null)
-				{
-				thisClient.processPackets();
-				thisClient.sendMoveMessage(ship.getLocationVec());
-				}
-			// station.rotateStation();
-			// Update SkyBox according to ship's position
-			Point3D camLoc = ship.getCamera().getLocation();
+<<<<<<< HEAD
+=======
+			//System.out.println("TICK");
+				lastUpdatedTime = currentTime;
+				// Update ship's movement according to speed
+				ship.move();
+				if (thisClient != null)
+					{
+						thisClient.processPackets();
+						thisClient.sendMoveMessage(ship.getLocationVec());
+					}
+				station.rotateStation();
+				// Update SkyBox according to ship's position
+				Point3D camLoc = ship.getCamera().getLocation();
 
-			camTranslation = new Matrix3D();
-			camTranslation.translate(camLoc.getX(), camLoc.getY(), camLoc.getZ());
+				camTranslation = new Matrix3D();
+				camTranslation.translate(camLoc.getX(), camLoc.getY(), camLoc.getZ());
 
-			skyBox.setLocalTranslation(camTranslation);
-			Matrix3D mat;
-			Vector3D translateVec;
-			physicsEngine.update(200.0f);
-			for (SceneNode s : getGameWorld())
-				{
-				if (s.getPhysicsObject() != null)
+				skyBox.setLocalTranslation(camTranslation);
+				Matrix3D mat;
+				Vector3D translateVec;
+				physicsEngine.update(200.0f);
+				for (SceneNode s : getGameWorld())
+					{ 
+					if (s.getPhysicsObject() != null)
+>>>>>>> origin/master
 					{
 					mat = new Matrix3D(s.getPhysicsObject().getTransform());
 					translateVec = mat.getCol(3);
 					s.getLocalTranslation().setCol(3, translateVec);
 					}
-				}
-			/*
-			 * for (SceneNode s : getGameWorld()) { if (s.getPhysicsObject() }
-			 */
-			// planetGrp.rotate(.5f, new Vector3D(0, 1, 0));
-			super.update(elapsedTimeMS);
+<<<<<<< HEAD
+=======
+				/* for (SceneNode s : getGameWorld())
+					{
+					if (s.getPhysicsObject()
+					}
+					*/
+				planetGrp.rotate(.5f, new Vector3D(0, 1, 0));
+				super.update(elapsedTimeMS);
+>>>>>>> origin/master
 			}
 		}
 

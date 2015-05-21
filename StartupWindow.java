@@ -52,7 +52,7 @@ public class StartupWindow
 		game.start();
 		}
 
-	/**
+	/*
 	 * Create the application.
 	 */
 	public StartupWindow()
