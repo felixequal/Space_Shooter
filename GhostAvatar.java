@@ -38,6 +38,7 @@ public class GhostAvatar extends TriMesh
 		shipT = TextureManager.loadTexture2D("textures/playerUV.jpg");
 		shipT.setApplyMode(ApplyMode.Replace);
 		shipObj.setTexture(shipT);
+
 		getAvatar();
 		}
 
@@ -85,5 +86,4 @@ public class GhostAvatar extends TriMesh
 		shipObj.setLocalRotation(mat);
 		//shipObj.setLocalRotation(mat);
 		}
-
 	}

@@ -36,7 +36,6 @@ public class StartupWindow
 	 */
 	public static void main(String[] args)
 		{
-
 		try
 			{
 			StartupWindow window = new StartupWindow();

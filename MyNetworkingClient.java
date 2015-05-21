@@ -3,6 +3,7 @@ package space_shooter;
  * If there is no server, it ignores network functionality and just runs standalone.
  * 
  */
+import java.awt.Color;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -25,6 +26,7 @@ import sage.physics.IPhysicsObject;
 import sage.physics.PhysicsEngineFactory;
 import sage.renderer.IRenderer;
 import sage.scene.Group;
+import sage.scene.HUDString;
 import sage.scene.SceneNode;
 import sage.scene.TriMesh;
 import sage.scene.shape.Cube;
@@ -51,6 +53,7 @@ public class MyNetworkingClient extends BaseGame
 	private String gpName, kbName;
 	private FindComponents findControls;
 	private SpaceStation station;
+	private Map map;
 	private Planet planet;
 	private Cube cube;
 	private Group planetGrp;
@@ -91,7 +94,7 @@ public class MyNetworkingClient extends BaseGame
 
 	@Override
 	public void initGame()
-		{
+		{		
 		try
 			{
 				remAddr = InetAddress.getByName(serverAddress);
@@ -144,7 +147,7 @@ public class MyNetworkingClient extends BaseGame
 		initInput();
 		
 		initAudio();
-		
+				
 		initPhysicsSystem();
 		createSagePhysicsWorld();
 		// Run Signature Script
@@ -249,6 +252,10 @@ public class MyNetworkingClient extends BaseGame
 		// planetGrp = planet.loadObject();
 		// planetGrp.translate(0, 0, 0);
 		// addGameWorldObject(planetGrp);
+		 planet = new Planet();
+		 planetGrp = planet.loadObject();
+		 planetGrp.translate(0, 0, 0);
+		 addGameWorldObject(planetGrp);
 		// Add other objects
 		ship = new SpaceShip(renderer, display);
 
@@ -256,6 +263,13 @@ public class MyNetworkingClient extends BaseGame
 		//station = new SpaceStation();
 		//addGameWorldObject(station.loadObject());
 
+		map = new Map();
+		addGameWorldObject(map.loadWall1());
+		addGameWorldObject(map.loadWall2());
+		addGameWorldObject(map.loadWall3());
+		addGameWorldObject(map.loadWall4());
+		addGameWorldObject(map.loadCargoShip());
+		
 		// Load terrain
 		// terrain = new Terrain(this);
 		//tBlock = terrain.getTerrain();
