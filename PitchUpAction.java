@@ -22,13 +22,13 @@ public class PitchUpAction extends AbstractInputAction
 	@Override
 	public void performAction(float time, Event e)
 	{
+		float rot = 0.05f;
 		Matrix3D rotationAmt = new Matrix3D();
-		
 		Vector3D viewDir = camera.getViewDirection();
 		Vector3D upDir = camera.getUpAxis();
 		Vector3D rightDir = camera.getRightAxis();
 		
-		rotationAmt.rotate(0.05, rightDir);
+		rotationAmt.rotate(rot, rightDir);
 			
 		viewDir = viewDir.mult(rotationAmt);
 		upDir = upDir.mult(rotationAmt);
@@ -39,7 +39,7 @@ public class PitchUpAction extends AbstractInputAction
 		if (client != null)
 			{
 				client.processPackets();
-				client.sendRotMessage(viewDir);
+				client.sendRotMessage(rot, rightDir);
 			}
 		
 		

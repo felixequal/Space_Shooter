@@ -325,11 +325,11 @@ public class MyNetworkingClient extends BaseGame
 				ship.getCamera(), ship);
 		PitchAction pitch = new PitchAction(ship.getCamera(), ship);
 		PitchUpAction pitchUp = new PitchUpAction(thisClient, ship.getCamera(), ship);
-		PitchDownAction pitchDown = new PitchDownAction(ship.getCamera(), ship);
-		YawRightAction yawRight = new YawRightAction(ship.getCamera(), ship);
-		YawLeftAction yawLeft = new YawLeftAction(ship.getCamera(), ship);
-		TiltRightAction tiltRight = new TiltRightAction(ship.getCamera(), ship);
-		TiltLeftAction tiltLeft = new TiltLeftAction(ship.getCamera(), ship);
+		PitchDownAction pitchDown = new PitchDownAction(thisClient, ship.getCamera(), ship);
+		YawRightAction yawRight = new YawRightAction(thisClient,ship.getCamera(), ship);
+		YawLeftAction yawLeft = new YawLeftAction(thisClient,ship.getCamera(), ship);
+		TiltRightAction tiltRight = new TiltRightAction(thisClient,ship.getCamera(), ship);
+		TiltLeftAction tiltLeft = new TiltLeftAction(thisClient,ship.getCamera(), ship);
 		
 		FireLaserAction fireLaser = new FireLaserAction(this, ship);
 		///////////////////////////////////////////////////////////////////////////////////////////////////////

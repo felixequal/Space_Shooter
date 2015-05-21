@@ -119,9 +119,10 @@ public class MyClient extends GameConnectionClient
 			{
 			ghostID = UUID.fromString(msgTokens[1]);
 			//System.out.println("Received move message from server from: " + ghostID);
-			x = Double.parseDouble(msgTokens[2]);
-			y = Double.parseDouble(msgTokens[3]);
-			z = Double.parseDouble(msgTokens[4]);
+			float rotAmount = (float) Double.parseDouble(msgTokens[2]);
+			x = Double.parseDouble(msgTokens[3]);
+			y = Double.parseDouble(msgTokens[4]);
+			z = Double.parseDouble(msgTokens[5]);
 			Vector3D ghostcrVector = new Vector3D(x,y,z);
 			//System.out.println("move vector from other client: " + ghostVector.toString());			
 			for(GhostAvatar check: ghostAvatars)
@@ -129,7 +130,7 @@ public class MyClient extends GameConnectionClient
 				if(check.getGhostID().equals(ghostID))
 					{
 					//System.out.println("found correct ghost. Moving: " + ghostID);
-					check.rotAvatar(ghostcrVector);
+					check.rotAvatar(rotAmount, ghostcrVector);
 					}
 				}
 			}
@@ -252,12 +253,12 @@ public void sendMoveMessage(Vector3D pos)
 		catch (IOException e) { e.printStackTrace(); }
 }
 
-public void sendRotMessage(Vector3D rot)
+public void sendRotMessage(float amount, Vector3D rot)
 { 
 System.out.println("In MyClient: sending rot message");
 	try
 		{ String message = new String("rot," + id.toString());
-		message += "," + rot.getX()+"," + rot.getY() + "," + rot.getZ();
+		message +=","+ amount + "," + rot.getX()+"," + rot.getY() + "," + rot.getZ();
 		sendPacket(message);
 		}
 		catch (IOException e) { e.printStackTrace(); }
