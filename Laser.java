@@ -31,7 +31,7 @@ public class Laser extends MoveableObject{
 		{ 
 		float currentLasTime = System.nanoTime();
 		float elapsedLasTime = ((currentLasTime-lastUpdatedLasTime)/10000000.0f);
-		System.out.println("laser time:" + elapsedLasTime);
+		//System.out.println("laser time:" + elapsedLasTime);
 		if (elapsedLasTime > 500.0f)
 			{
 			expired = true;
