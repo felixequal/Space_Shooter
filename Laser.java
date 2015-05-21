@@ -13,6 +13,8 @@ public class Laser extends MoveableObject
 	private float speed;
 	private Point3D location;
 	private SpaceShip ship;
+	private float lastUpdatedLasTime;
+	boolean expired = false;
 
 	public Laser(SpaceShip ship, float speed)
 		{
@@ -22,10 +24,24 @@ public class Laser extends MoveableObject
 		this.speed = speed;
 		laser.scale(0.1f, 0.1f, 0.1f);
 		laser.setColor(Color.RED);
+		lastUpdatedLasTime = System.nanoTime();
 		laser.translate((float) ship.getCamera().getLocation().getX(), (float) ship.getCamera().getLocation().getY(), (float) ship.getCamera().getLocation().getZ());
 		}
 
-
+	public boolean expired()
+		{
+		
+		float currentLasTime = System.nanoTime();
+		float elapsedLasTime = ((currentLasTime-lastUpdatedLasTime)/10000000.0f);
+		System.out.println("laser time:" + elapsedLasTime);
+		if (elapsedLasTime > 500.0f)
+			{
+			expired = true;
+			return expired;
+			}
+		return false;
+		}
+	
 	public Sphere getLaser()
 		{
 		return laser;

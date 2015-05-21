@@ -418,6 +418,7 @@ public void update(float elapsedTimeMS)
 				s.getLocalTranslation().setCol(3, translateVec);
 				}
 			}
+		checkLaserTTL();
 		planetGrp.rotate(.5f, new Vector3D(0, 1, 0));
 		super.update(elapsedTimeMS);
 		}
@@ -476,6 +477,14 @@ public void addPhysicsObject(Sphere laserObj)
 	laserP.setDamping(0, 0);
 	laserP.setFriction(0);
 	laserObj.setPhysicsObject(laserP);
+	}
 
+public void checkLaserTTL()
+	{
+	Vector<Laser> laserStorage = ship.getLaserStorage();
+	for (Laser las: laserStorage)
+		{
+		if (las.expired()) removeGameWorldObject(las.getLaser());
+		}
 	}
 }
