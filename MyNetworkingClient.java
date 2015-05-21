@@ -1,5 +1,4 @@
 package space_shooter;
-
 /* This is the main game client. It inits a physics handler and a network hander (CLASS:MyClient) which is attached and runs the network part.
  * If there is no server, it ignores network functionality and just runs standalone.
  * 
@@ -28,6 +27,7 @@ import sage.physics.PhysicsEngineFactory;
 import sage.physics.JBullet.JBulletBoxObject;
 import sage.renderer.IRenderer;
 import sage.scene.Group;
+import sage.scene.HUDImage;
 import sage.scene.HUDString;
 import sage.scene.SceneNode;
 import sage.scene.TriMesh;
@@ -47,6 +47,7 @@ import java.util.*;
 
 public class MyNetworkingClient extends BaseGame
 	{
+
 	private static final int bulletspeed = 20;
 	private IDisplaySystem display;
 	private IRenderer renderer;
@@ -58,7 +59,7 @@ public class MyNetworkingClient extends BaseGame
 	private SpaceStation station;
 	private Map map;
 	private Planet planet;
-	//private Cube cube;
+	private Cube cube;
 	private Group planetGrp;
 	private Terrain terrain;
 	private TerrainBlock tBlock;
@@ -70,7 +71,6 @@ public class MyNetworkingClient extends BaseGame
 	InetAddress remAddr;
 	private float currentTime;
 	private float lastUpdatedTime;
-
 	private ScriptEngineManager factory;
 	private String worldScript = "scripts/SetupWorld.js";
 	private String signatureScript = "scripts/SignatureScript.js";
@@ -79,14 +79,13 @@ public class MyNetworkingClient extends BaseGame
 	private String serverAddress;
 	private int serverPort;
 	private IPhysicsEngine physicsEngine;
-
-	private IPhysicsObject shipBall, laserP;
+	private IPhysicsObject shipBall,laserP;
 	private Matrix3D camTranslation;
-
+	private HUDImage cockpit, screen, healthImage, speedImage;
+	private HUDImage spd_Image;
 	IAudioManager audioMgr;
 	Sound thrusterSound;
 	AudioResource resource1;
-
 	public MyNetworkingClient(String serverAddr, int serverPrt)
 		{
 		super();
@@ -250,20 +249,18 @@ public class MyNetworkingClient extends BaseGame
 			physCubeList.add(physCube);
 			addGameWorldObject(physCube);
 			}
-
 		// planet = new Planet();
 		// planetGrp = planet.loadObject();
 		// planetGrp.translate(0, 0, 0);
 		// addGameWorldObject(planetGrp);
-		planet = new Planet();
-		planetGrp = planet.loadObject();
-		// planetGrp.translate(0, 0, 0);
-		addGameWorldObject(planetGrp);
+		 planet = new Planet();
+		 planetGrp = planet.loadObject();
+		 planetGrp.translate(0, 0, 0);
+		 addGameWorldObject(planetGrp);
 		// Add other objects
 		ship = new SpaceShip(renderer, display);
 
 		// Add Space Station
-
 		station = new SpaceStation();
 		addGameWorldObject(station.loadObject());
 
@@ -273,7 +270,6 @@ public class MyNetworkingClient extends BaseGame
 		addGameWorldObject(map.loadWall3());
 		addGameWorldObject(map.loadWall4());
 		addGameWorldObject(map.loadCargoShip());
-
 		// Load terrain
 		// terrain = new Terrain(this);
 		// tBlock = terrain.getTerrain();
@@ -295,36 +291,38 @@ public class MyNetworkingClient extends BaseGame
 		{
 		try
 			{
-			FileReader fileReader = new FileReader(scriptFileName);
-			engine.eval(fileReader);
-			fileReader.close();
+				FileReader fileReader = new FileReader(scriptFileName);
+				engine.eval(fileReader);
+				fileReader.close();
 			} catch (FileNotFoundException e1)
 			{
-			System.out.println(scriptFileName + "not found" + e1);
+				System.out.println(scriptFileName + "not found" + e1);
 			} catch (IOException e2)
 			{
-			System.out.println("IO Problem With " + scriptFileName + e2);
+				System.out.println("IO Problem With " + scriptFileName + e2);
 			} catch (ScriptException e3)
 			{
-			System.out.println("ScriptException in " + scriptFileName + e3);
+				System.out.println("ScriptException in " + scriptFileName + e3);
 			} catch (NullPointerException e4)
 			{
-			System.out.println("Null ptr exception in " + scriptFileName + e4);
+				System.out.println("Null ptr exception in " + scriptFileName
+						+ e4);
 			}
 		}
 
 	public void initInput()
-		{
-		findControls = new FindComponents(); // Look for all controls connected
-		// // to computer that can be
-		// used
-		// for game
+	{
+		findControls = new FindComponents(); // Look for all controls connected											// to computer that can be used
+												// for game
 		// findControls.listControllers(); //List out available controllers
 
 		// Add Action Classes
-		MoveForwardAction forward = new MoveForwardAction(this, thisClient, ship.getCamera(), ship);
-		MoveBackwardAction backward = new MoveBackwardAction(this, ship.getCamera(), ship);
-		StopMovingAction stop = new StopMovingAction(this, thisClient, ship.getCamera(), ship);
+		MoveForwardAction forward = new MoveForwardAction(this, thisClient,
+				ship.getCamera(), ship);
+		MoveBackwardAction backward = new MoveBackwardAction(this, ship.getCamera(),
+				ship);
+		StopMovingAction stop = new StopMovingAction(this, thisClient,
+				ship.getCamera(), ship);
 		PitchAction pitch = new PitchAction(ship.getCamera(), ship);
 		PitchUpAction pitchUp = new PitchUpAction(thisClient, ship.getCamera(), ship);
 		PitchDownAction pitchDown = new PitchDownAction(ship.getCamera(), ship);
@@ -332,81 +330,188 @@ public class MyNetworkingClient extends BaseGame
 		YawLeftAction yawLeft = new YawLeftAction(ship.getCamera(), ship);
 		TiltRightAction tiltRight = new TiltRightAction(ship.getCamera(), ship);
 		TiltLeftAction tiltLeft = new TiltLeftAction(ship.getCamera(), ship);
-
+		
 		FireLaserAction fireLaser = new FireLaserAction(this, ship);
-		// /////////////////////////////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////////////////////////////////
 		kbName = im.getKeyboardName();
-		im.associateAction(kbName, Key.W, forward, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-		im.associateAction(kbName, Key.X, stop, IInputManager.INPUT_ACTION_TYPE.ON_PRESS_AND_RELEASE);
-		im.associateAction(kbName, Key.S, backward, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-		im.associateAction(kbName, Key.DOWN, pitchUp, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-		im.associateAction(kbName, Key.UP, pitchDown, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-		im.associateAction(kbName, Key.RIGHT, yawRight, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-		im.associateAction(kbName, Key.LEFT, yawLeft, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-		im.associateAction(kbName, Key.D, tiltRight, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-		im.associateAction(kbName, Key.A, tiltLeft, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-
-		im.associateAction(kbName, Key.SPACE, fireLaser, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-
+		im.associateAction(kbName, Key.W, forward,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+		im.associateAction(kbName, Key.X, stop,
+				IInputManager.INPUT_ACTION_TYPE.ON_PRESS_AND_RELEASE);
+		im.associateAction(kbName, Key.S, backward,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+		im.associateAction(kbName, Key.DOWN, pitchUp,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+		im.associateAction(kbName, Key.UP, pitchDown,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+		im.associateAction(kbName, Key.RIGHT, yawRight,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+		im.associateAction(kbName, Key.LEFT, yawLeft,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+		im.associateAction(kbName, Key.D, tiltRight,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+		im.associateAction(kbName, Key.A, tiltLeft,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+		
+		im.associateAction(kbName, Key.SPACE, fireLaser,
+				IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+			
 		// Check to see if gamepad is connected
-		if (!(im.getFirstGamepadName() == null))
+			if (!(im.getFirstGamepadName() == null))
 			{
-			gpName = im.getFirstGamepadName();
+				gpName = im.getFirstGamepadName();
 
-			// Assign controls
-			im.associateAction(gpName, net.java.games.input.Component.Identifier.Button._2, forward, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-			im.associateAction(gpName, net.java.games.input.Component.Identifier.Button._3, backward, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-			im.associateAction(gpName, net.java.games.input.Component.Identifier.Axis.Y, pitch, IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+				// Assign controls
+				im.associateAction(gpName,
+						net.java.games.input.Component.Identifier.Button._2,
+						forward,
+						IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+				im.associateAction(gpName,
+						net.java.games.input.Component.Identifier.Button._3,
+						backward,
+						IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+				im.associateAction(gpName,
+						net.java.games.input.Component.Identifier.Axis.Y,
+						pitch,
+						IInputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
 			}
 		}
-
-	public void initAudio()
-		{
+	
+	public void initAudio(){
 		audioMgr = AudioManagerFactory.createAudioManager("sage.audio.joal.JOALAudioManager");
-		if (!audioMgr.initialize())
-			{
+		
+		if(!audioMgr.initialize())
+		{
 			System.out.println("Audio Manager failed to initialize");
 			return;
-			}
+		}
 		resource1 = audioMgr.createAudioResource("sounds/thrusters.wav", AudioResourceType.AUDIO_SAMPLE);
+		
 		thrusterSound = new Sound(resource1, SoundType.SOUND_EFFECT, 100, true);
 		thrusterSound.initialize(audioMgr);
 		thrusterSound.setMaxDistance(50.0f);
 		thrusterSound.setMinDistance(3.0f);
 		thrusterSound.setRollOff(5.0f);
 		thrusterSound.setLocation(new Point3D(ship.getWorldTranslation().getCol(3)));
-		}
-
-	public void playThrustersSound()
-		{
+	}
+	
+	public void initHUD(){
+		cockpit = new HUDImage("Textures/cockpit.png");
+		cockpit.rotateImage(180.0f);
+		cockpit.scale(2.0f, 0.8f, 1.0f);
+		cockpit.setLocation(0,-0.6);
+		cockpit.setRenderMode(sage.scene.SceneNode.RENDER_MODE.ORTHO);
+		cockpit.setCullMode(sage.scene.SceneNode.CULL_MODE.NEVER);
+		ship.getCamera().addToHUD(cockpit);
+		
+		screen = new HUDImage("Textures/screen.jpg");
+		screen.setLocation(0, -0.7);
+		screen.scale(0.45f, 0.9f, 0.7f);
+		screen.setRenderMode(sage.scene.SceneNode.RENDER_MODE.ORTHO);
+		screen.setCullMode(sage.scene.SceneNode.CULL_MODE.NEVER);
+		ship.getCamera().addToHUD(screen);
+		
+		healthImage = new HUDImage("Textures/healthImage.png");
+		healthImage.rotateImage(180.0f);
+		healthImage.scale(0.2f,  0.2f, 1.0f);
+		healthImage.setLocation(-0.1, -0.4);
+		healthImage.setRenderMode(sage.scene.SceneNode.RENDER_MODE.ORTHO);
+		healthImage.setCullMode(sage.scene.SceneNode.CULL_MODE.NEVER);
+		ship.getCamera().addToHUD(healthImage);
+		
+		speedImage = new HUDImage("Textures/speedImage.png");
+		speedImage.rotateImage(180.0f);
+		speedImage.scale(0.2f,  0.2f, 1.0f);
+		speedImage.setLocation(-0.1, -0.6);
+		speedImage.setRenderMode(sage.scene.SceneNode.RENDER_MODE.ORTHO);
+		speedImage.setCullMode(sage.scene.SceneNode.CULL_MODE.NEVER);
+		ship.getCamera().addToHUD(speedImage);
+		
+		healthImage = new HUDImage("Textures/healthImage_5.jpg");
+		//healthImage_5.rotateImage(180.0f);
+		healthImage.scale(0.1f,  0.1f, 1.0f);
+		healthImage.setLocation(0.075, -0.39);
+		healthImage.setRenderMode(sage.scene.SceneNode.RENDER_MODE.ORTHO);
+		healthImage.setCullMode(sage.scene.SceneNode.CULL_MODE.NEVER);
+		ship.getCamera().addToHUD(healthImage);
+	}
+	
+	public void playThrustersSound(){
 		thrusterSound.play();
-		}
-
-	public void stopThrustersSound()
-		{
+	}
+	
+	public void stopThrustersSound(){
 		thrusterSound.stop();
-		}
+	}
 
-	public Matrix3D getCamLocation()
-		{
+	public Matrix3D getCamLocation(){
 		return camTranslation;
-		}
-
+	}
 	@Override
 	public void update(float elapsedTimeMS)
 		{
 		currentTime = System.nanoTime();
-		float elapsedTime = ((currentTime - lastUpdatedTime) / 1000000.000f);
-		// System.out.println("elapsedTime: " + elapsedTime);
+		float elapsedTime = ((currentTime-lastUpdatedTime)/1000000.000f);
+		//System.out.println("elapsedTime: " + elapsedTime);
 		if (elapsedTime >= 10.0f)
 			{
-			lastUpdatedTime = currentTime;
-			// Update ship's movement according to speed
-			ship.move();
-			if (thisClient != null)
-				{
-				thisClient.processPackets();
-				thisClient.sendMoveMessage(ship.getLocationVec());
+			//System.out.println("TICK");
+				lastUpdatedTime = currentTime;
+				// Update ship's movement according to speed
+				ship.move();
+				if (thisClient != null)
+					{
+						thisClient.processPackets();
+						thisClient.sendMoveMessage(ship.getLocationVec());
+					}
+				station.rotateStation();
+				// Update SkyBox according to ship's position
+				Point3D camLoc = ship.getCamera().getLocation();
+
+				camTranslation = new Matrix3D();
+				camTranslation.translate(camLoc.getX(), camLoc.getY(), camLoc.getZ());
+
+				skyBox.setLocalTranslation(camTranslation);
+				Matrix3D mat;
+				Vector3D translateVec;
+				physicsEngine.update(200.0f);
+				for (SceneNode s : getGameWorld())
+					{ 
+					if (s.getPhysicsObject() != null)
+					{
+					mat = new Matrix3D(s.getPhysicsObject().getTransform());
+					translateVec = mat.getCol(3);
+					s.getLocalTranslation().setCol(3,translateVec);
+					}
+					}
+				/* for (SceneNode s : getGameWorld())
+					{
+					if (s.getPhysicsObject()
+					}
+					*/
+				planetGrp.rotate(.5f, new Vector3D(0, 1, 0));
+				super.update(elapsedTimeMS);
+				
+				if(ship.getHealth() == 6){
+					healthImage.setImage("textures/healthImage_5.jpg");
+				}else{
+					if(ship.getHealth() == 5){
+						healthImage.setImage("textures/healthImage_4.jpg");
+					}else{
+						if(ship.getHealth() == 4){
+							healthImage.setImage("textures/healthImage_3.jpg");
+						}else{
+							if(ship.getHealth() == 3){
+								healthImage.setImage("textures/healthImage_2.jpg");
+							}else{
+								if(ship.getHealth() == 2){
+									healthImage.setImage("textures/healthImage_1.jpg");
+								}else{
+									healthImage.setImage("textures/healthImage_0.jpg");
+								}
+							}
+						}
+					}
 				}
 			station.rotateStation();
 			// Update SkyBox according to ship's position
@@ -434,6 +539,7 @@ public class MyNetworkingClient extends BaseGame
 
 	public void setIsConnected(boolean b)
 		{}
+
 
 	public Vector3D getPlayerPosition()
 		{
