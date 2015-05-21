@@ -503,6 +503,20 @@ public class MyNetworkingClient extends BaseGame
 				}else{
 					if(ship.getHealth() == 5){
 						healthImage.setImage("textures/healthImage_4.jpg");
+					}else{
+						if(ship.getHealth() == 4){
+							healthImage.setImage("textures/healthImage_3.jpg");
+						}else{
+							if(ship.getHealth() == 3){
+								healthImage.setImage("textures/healthImage_2.jpg");
+							}else{
+								if(ship.getHealth() == 2){
+									healthImage.setImage("textures/healthImage_1.jpg");
+								}else{
+									healthImage.setImage("textures/healthImage_0.jpg");
+								}
+							}
+						}
 					}
 				}
 			}
