@@ -82,7 +82,7 @@ public class SpaceShip extends MoveableObject{
 	public Vector<Laser> getLaserStorage(){
 		return laserStorage;
 	}
-
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	public void setCamera(ICamera camera){this.camera = camera;}
 	public ICamera getCamera(){return camera;}
@@ -145,8 +145,6 @@ public class SpaceShip extends MoveableObject{
 		this.ammoEmpty = ammoEmpty;
 	}
 	
-	
-	
 	public boolean getAmmoBoolean(){return ammoEmpty;}
 	
 	public void setAmmoStorage(Vector<Laser> laserStorage){
@@ -156,6 +154,4 @@ public class SpaceShip extends MoveableObject{
 	public Vector<Laser> getAmmoStorage(){
 		return laserStorage;
 	}
-	
-	
 }
