@@ -127,7 +127,6 @@ public class MyNetworkingClient extends BaseGame
 		// Get a list of the script engines
 		List<ScriptEngineFactory> list = factory.getEngineFactories();
 		jsEngine = factory.getEngineByName("js");
-
 		System.out.println("Script Engine Factories Found: ");
 		for (ScriptEngineFactory f : list)
 			{
@@ -171,7 +170,7 @@ public class MyNetworkingClient extends BaseGame
 
 	protected void initPhysicsSystem()
 	{
-		String engine = "sage.physics.ODE4J.ODE4JPhysicsEngine";
+		String engine = "sage.physics.JBullet.JBulletPhysicsEngine";
 		physicsEngine = PhysicsEngineFactory.createPhysicsEngine(engine);
 		physicsEngine.initSystem();
 		float[] gravity = {0,0,0};
@@ -179,18 +178,30 @@ public class MyNetworkingClient extends BaseGame
 	}
 	
 	private void createSagePhysicsWorld()
-	{/*
+	{
+	double[] scale = cube.getLocalScale().getValues();
+	float[] scale2 = new float[scale.length];
+	for(int x = 0; x < scale.length;x++)
+	{
+	scale2[x] = (float)scale[x]; 
+	System.out.println("scale: " + scale[x] + "scale2:" + scale2[x]);
+	}
+	cube.updateWorldBound();
+	cubeP =  physicsEngine.addBoxObject(physicsEngine.nextUID(), 100000, cube.getWorldTransform().getValues(),scale2);
+	cube.setPhysicsObject(cubeP);
+	/*
 		float massCube =  1000.0f;
 		for (PhysCube pcube: physCubeList){
 		cubeP = physicsEngine.addBoxObject(physicsEngine.nextUID(),massCube,pcube.getCube().getWorldTransform().getValues(), pcube.getSize());
 		cubeP.setBounciness(1.0f);
 		pcube.getCube().setPhysicsObject(cubeP);
 		}
+		*/
 		float massShip = 5.0f;
 		shipBall =  physicsEngine.addSphereObject(physicsEngine.nextUID(),massShip,ship.getWorldTransform().getValues(), 1.0f);
 		shipBall.setBounciness(1.0f);
 		ship.setPhysicsObject(shipBall); 
-		*/
+		
 	}
 	public void initGameObjects()
 		{
@@ -201,6 +212,18 @@ public class MyNetworkingClient extends BaseGame
 		addGameWorldObject(skyBox);
 		// Now enabled the ZBuffer
 		skyBox.getBuf().setDepthTestingEnabled(true);
+		cube = new Cube();
+		//Matrix3D scale = cube.getLocalScale();
+		cube.scale(3, 3, 3);
+		//cube.setLocalScale(scale);
+		cube.translate(1,0,1);
+		
+		//physCube = new PhysCube(x,y,z,cube);
+		//physCubeList.add(physCube);
+		addGameWorldObject(cube);
+		cube.updateLocalBound();
+		cube.updateWorldBound();
+		
 		/*for (int p = 0; p < 15; p++)
 			{
 				Random r = new Random();
@@ -214,13 +237,14 @@ public class MyNetworkingClient extends BaseGame
 				localTranslation.translate(a, b, c);
 				cube = new Cube();
 				cube.scale(x ,y ,z);
-				cube.setLocalTranslation(localTranslation);
+				cube.setWorldTranslation(localTranslation);
 				cube.updateWorldBound();
 				physCube = new PhysCube(x,y,z,cube);
 				physCubeList.add(physCube);
 				addGameWorldObject(cube);
 			}
 			*/
+			
 		// planet = new Planet();
 		// planetGrp = planet.loadObject();
 		// planetGrp.translate(0, 0, 0);
